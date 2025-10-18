@@ -1,0 +1,44 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# API Keys and credentials
+config.json
+credentials.json
+*-credentials.json
+
+# Google Apps Script clasp files
+.clasp.json
+.claspignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Node modules (if using any build tools)
+node_modules/
+
+# Backup files
+*.backup
+*.bak
+
+# Test files
+test-data.json
+sample-submissions.json

@@ -1,0 +1,176 @@
+<!--
+Webflow Form Integration for Golden Wings RSVP
+Add this to your landing page RSVP forms
+-->
+
+<!-- Enhanced RSVP Form with better styling -->
+<div class="rsvp-form-container" style="max-width: 500px; margin: 0 auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+
+  <div class="form-header" style="text-align: center; margin-bottom: 30px;">
+    <h3 style="color: #1e3a8a; margin-bottom: 10px; font-size: 24px;">Reserve Your Seat</h3>
+    <p style="color: #6b7280; margin: 0;">Join us for this exclusive screening</p>
+  </div>
+
+  <!-- Webflow Form Block -->
+  <form id="golden-wings-rsvp" name="golden-wings-rsvp" data-name="Golden Wings RSVP" method="post" class="rsvp-form">
+
+    <!-- Name Field -->
+    <div class="form-field" style="margin-bottom: 20px;">
+      <label for="name" style="display: block; margin-bottom: 8px; color: #374151; font-weight: 500;">Full Name *</label>
+      <input type="text" id="name" name="name" required maxlength="256"
+             style="width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 16px; transition: border-color 0.3s;"
+             onfocus="this.style.borderColor='#3b82f6'"
+             onblur="this.style.borderColor='#e5e7eb'"
+             placeholder="Enter your full name">
+    </div>
+
+    <!-- Email Field -->
+    <div class="form-field" style="margin-bottom: 20px;">
+      <label for="email" style="display: block; margin-bottom: 8px; color: #374151; font-weight: 500;">Email Address *</label>
+      <input type="email" id="email" name="email" required maxlength="256"
+             style="width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 16px; transition: border-color 0.3s;"
+             onfocus="this.style.borderColor='#3b82f6'"
+             onblur="this.style.borderColor='#e5e7eb'"
+             placeholder="your.email@example.com">
+    </div>
+
+    <!-- Phone Field -->
+    <div class="form-field" style="margin-bottom: 20px;">
+      <label for="phone" style="display: block; margin-bottom: 8px; color: #374151; font-weight: 500;">Phone Number</label>
+      <input type="tel" id="phone" name="phone" maxlength="256"
+             style="width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 16px; transition: border-color 0.3s;"
+             onfocus="this.style.borderColor='#3b82f6'"
+             onblur="this.style.borderColor='#e5e7eb'"
+             placeholder="(555) 123-4567">
+    </div>
+
+    <!-- Party Size Field -->
+    <div class="form-field" style="margin-bottom: 20px;">
+      <label for="partySize" style="display: block; margin-bottom: 8px; color: #374151; font-weight: 500;">Party Size *</label>
+      <select id="partySize" name="partySize" required
+              style="width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 16px; background: white;">
+        <option value="1">1 person</option>
+        <option value="2">2 people</option>
+        <option value="3">3 people</option>
+        <option value="4">4 people</option>
+        <option value="5">5 people</option>
+        <option value="6">6+ people</option>
+      </select>
+    </div>
+
+    <!-- Special Requests Field -->
+    <div class="form-field" style="margin-bottom: 25px;">
+      <label for="specialRequests" style="display: block; margin-bottom: 8px; color: #374151; font-weight: 500;">Special Requests or Accessibility Needs</label>
+      <textarea id="specialRequests" name="specialRequests" maxlength="500"
+                style="width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 16px; min-height: 80px; resize: vertical; transition: border-color 0.3s;"
+                onfocus="this.style.borderColor='#3b82f6'"
+                onblur="this.style.borderColor='#e5e7eb'"
+                placeholder="Any special accommodations needed..."></textarea>
+    </div>
+
+    <!-- Hidden source field -->
+    <input type="hidden" id="source" name="source" value="landing-page">
+
+    <!-- Submit Button -->
+    <button type="submit"
+            style="width: 100%; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 14px 24px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.4)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      Confirm My RSVP
+    </button>
+
+    <!-- Loading state -->
+    <div id="loading-state" style="display: none; text-align: center; margin-top: 15px;">
+      <div style="display: inline-block; width: 20px; height: 20px; border: 3px solid #e5e7eb; border-top: 3px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <p style="margin: 10px 0 0 0; color: #6b7280;">Processing your RSVP...</p>
+    </div>
+
+  </form>
+
+  <!-- Success Message -->
+  <div id="success-message" style="display: none; text-align: center; padding: 30px;">
+    <div style="width: 60px; height: 60px; background: #10b981; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+      <svg width="30" height="30" fill="white" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+    <h3 style="color: #10b981; margin-bottom: 10px;">RSVP Confirmed!</h3>
+    <p style="color: #6b7280; margin-bottom: 20px;">Thank you for reserving your seat. Check your email for confirmation details.</p>
+    <a href="/confirmation" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; display: inline-block;">View Details</a>
+  </div>
+
+</div>
+
+<!-- Add this CSS for animations -->
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .rsvp-form-container {
+    margin: 0 20px !important;
+    padding: 20px !important;
+  }
+}
+</style>
+
+<!-- Enhanced JavaScript for form handling -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('golden-wings-rsvp');
+  const loadingState = document.getElementById('loading-state');
+  const successMessage = document.getElementById('success-message');
+
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Show loading state
+      form.style.display = 'none';
+      loadingState.style.display = 'block';
+
+      // Get form data
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Add timestamp
+      data.timestamp = new Date().toISOString();
+
+      // Submit to webhook (this will be configured in Webflow)
+      // Webflow will handle the webhook submission automatically
+
+      // Simulate success for demo (remove when webhook is configured)
+      setTimeout(() => {
+        loadingState.style.display = 'none';
+        successMessage.style.display = 'block';
+
+        // Track conversion
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'rsvp_submit', {
+            'event_category': 'engagement',
+            'event_label': 'golden_wings_screening'
+          });
+        }
+
+        // Redirect to confirmation page after 3 seconds
+        setTimeout(() => {
+          window.location.href = '/confirmation';
+        }, 3000);
+      }, 2000);
+    });
+  }
+});
+
+// Phone number formatting
+document.getElementById('phone')?.addEventListener('input', function(e) {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length >= 6) {
+    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+  } else if (value.length >= 3) {
+    value = value.replace(/(\d{3})(\d{3})/, '($1) $2');
+  }
+  e.target.value = value;
+});
+</script>

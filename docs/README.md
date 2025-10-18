@@ -24,7 +24,13 @@ This directory contains essential context documents about the Golden Wings docum
 - Key moments and quotes
 - Robyn Stewart's journey captured in words
 
-### Director Interviews
+### Interviews & Perspectives
+
+**`Transcript_Jock_Bethune_Interview_Phone.pdf`**
+- Jock Bethune's perspective on aviation history
+- Industry veteran insights
+- The broader context of flight attendant careers
+- Additional layer of authenticity and depth
 
 **`Transcript_Caleb_ARFF_Director_Interview_Raw.pdf`**
 - Director's perspective on the film

@@ -7,7 +7,7 @@
 
 // Configuration
 const CONFIG = {
-  spreadsheetId: 'YOUR_SPREADSHEET_ID', // Replace with actual Google Sheets ID
+  spreadsheetId: '1tepMKJ6WLnXCmfmkV_tmDfSg_Qkgl6xF3KBtFu6gXMM',
   sheetName: 'RSVPs',
   adminEmail: 'info@golden-wings-robyn.com',
   screening: {
@@ -15,10 +15,32 @@ const CONFIG = {
     timePST: '16:30',
     timeCST: '18:30',
     timeEST: '19:30',
-    venue: 'TBD', // Update with actual venue
-    duration: '90 minutes'
+    venue: '747 First Class Lounge. Your boarding pass will arrive 24 hours before screening',
+    duration: '25 minutes'
   }
 };
+
+/**
+ * Google Apps Script entry point for GET requests
+ * Returns a simple status message
+ */
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      status: 'active',
+      message: 'Golden Wings RSVP webhook is running',
+      endpoint: 'POST to this URL with RSVP data'
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Google Apps Script entry point for POST requests
+ * This is automatically called when the webhook receives a POST
+ */
+function doPost(e) {
+  return handleRSVPSubmission(e);
+}
 
 /**
  * Main function to handle Webflow form submissions
@@ -35,7 +57,6 @@ function handleRSVPSubmission(e) {
       name: formData.name || '',
       email: formData.email || '',
       phone: formData.phone || '',
-      partySize: parseInt(formData.partySize) || 1,
       specialRequests: formData.specialRequests || '',
       source: formData.source || 'website',
       status: 'confirmed'
@@ -96,7 +117,6 @@ function saveToSpreadsheet(rsvpData) {
     rsvpData.name,
     rsvpData.email,
     rsvpData.phone,
-    rsvpData.partySize,
     rsvpData.specialRequests,
     rsvpData.source,
     rsvpData.status
@@ -111,20 +131,19 @@ function createRSVPSheet() {
   const sheet = spreadsheet.insertSheet(CONFIG.sheetName);
 
   // Add headers
-  sheet.getRange(1, 1, 1, 8).setValues([[
+  sheet.getRange(1, 1, 1, 7).setValues([[
     'Timestamp',
     'Name',
     'Email',
     'Phone',
-    'Party Size',
     'Special Requests',
     'Source',
     'Status'
   ]]);
 
   // Format headers
-  sheet.getRange(1, 1, 1, 8).setFontWeight('bold').setBackground('#f0f0f0');
-  sheet.autoResizeColumns(1, 8);
+  sheet.getRange(1, 1, 1, 7).setFontWeight('bold').setBackground('#f0f0f0');
+  sheet.autoResizeColumns(1, 7);
 }
 
 /**
@@ -150,7 +169,6 @@ function sendConfirmationEmail(rsvpData) {
           <p><strong>Date:</strong> Sunday, October 26, 2025</p>
           <p><strong>Time:</strong> 4:30 PM PST / 6:30 PM CST / 7:30 PM EST</p>
           <p><strong>Duration:</strong> ${CONFIG.screening.duration}</p>
-          <p><strong>Party Size:</strong> ${rsvpData.partySize} ${rsvpData.partySize === 1 ? 'person' : 'people'}</p>
           ${rsvpData.specialRequests ? `<p><strong>Special Requests:</strong> ${rsvpData.specialRequests}</p>` : ''}
         </div>
 
@@ -205,7 +223,7 @@ END:VCALENDAR"
  * Send notification to admin about new RSVP
  */
 function sendAdminNotification(rsvpData) {
-  const subject = `New RSVP: ${rsvpData.name} (Party of ${rsvpData.partySize})`;
+  const subject = `New RSVP: ${rsvpData.name}`;
 
   const body = `
 New RSVP received for Golden Wings screening:
@@ -213,7 +231,6 @@ New RSVP received for Golden Wings screening:
 Name: ${rsvpData.name}
 Email: ${rsvpData.email}
 Phone: ${rsvpData.phone}
-Party Size: ${rsvpData.partySize}
 Special Requests: ${rsvpData.specialRequests || 'None'}
 Source: ${rsvpData.source}
 Timestamp: ${rsvpData.timestamp}
@@ -243,8 +260,8 @@ function createCalendarEvent(rsvpData) {
       startTime,
       endTime,
       {
-        description: `Golden Wings documentary screening\n\nAttendee: ${rsvpData.name}\nParty Size: ${rsvpData.partySize}\n\nA powerful documentary following Robyn Stewart's remarkable 50+ year career as an American Airlines flight attendant.`,
-        location: 'TBD', // Update with actual venue
+        description: `Golden Wings documentary screening\n\nAttendee: ${rsvpData.name}\n\nA powerful documentary following Robyn Stewart's remarkable 50+ year career as an American Airlines flight attendant.`,
+        location: '747 First Class Lounge. Your boarding pass will arrive 24 hours before screening',
         guests: rsvpData.email,
         sendInvites: false // We handle email confirmation separately
       }
@@ -268,8 +285,8 @@ function getRSVPStats() {
 
   const stats = {
     totalRSVPs: rsvps.length,
-    totalAttendees: rsvps.reduce((sum, row) => sum + (parseInt(row[4]) || 0), 0),
-    confirmedRSVPs: rsvps.filter(row => row[7] === 'confirmed').length,
+    totalAttendees: rsvps.length,
+    confirmedRSVPs: rsvps.filter(row => row[6] === 'confirmed').length,
     recentRSVPs: rsvps.filter(row => {
       const rsvpDate = new Date(row[0]);
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);

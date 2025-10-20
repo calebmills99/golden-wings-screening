@@ -4,184 +4,156 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Golden Wings Documentary Screening RSVP System - A complete backend automation system for managing RSVPs for the Golden Wings documentary screening event (October 26, 2025).
+Golden Wings Documentary Screening RSVP System - A serverless event management system built on Google Apps Script. Handles form submissions from Webflow, stores data in Google Sheets, and automates confirmations via email and calendar invites.
 
-**Tech Stack**: Google Apps Script (backend), Google Sheets (database), Webflow (frontend forms), HTML/CSS/JavaScript
+**Tech Stack**: Google Apps Script (backend), Google Sheets (database), Webflow (form frontend), HTML/CSS/JS (static pages)
 
-**Core Purpose**: Automated RSVP handling with email confirmations, calendar integration, and admin dashboard for event management.
+**Event Details**: October 26, 2025 screening | 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
 
-## System Architecture
+## Architecture
 
-### Backend Flow
-1. **Webflow Form** → Webhook POST request → **Google Apps Script** (`golden-wings-backend.js`)
-2. **Google Apps Script** processes submission:
-   - Validates data
-   - Saves to Google Sheets
-   - Sends confirmation email to attendee
-   - Sends notification to admin
-   - Creates calendar event
-3. Returns JSON response to Webflow
+### Request Flow
+```
+Webflow Form → Webhook POST → Google Apps Script (Code.gs) → Response JSON
+                                      ↓
+                        ┌─────────────┼─────────────┐
+                        ↓             ↓             ↓
+                 Google Sheets   Email Conf.   Calendar Event
+```
 
-### Key Components
+### Key Integration Points
 
-**golden-wings-backend.js** (Google Apps Script)
-- Main webhook handler: `handleRSVPSubmission(e)` - Entry point for all form submissions
-- Database operations: `saveToSpreadsheet()`, `createRSVPSheet()`
-- Email system: `sendConfirmationEmail()`, `sendAdminNotification()`, `sendWeeklyReport()`
-- Calendar integration: `createCalendarEvent()`
-- Admin utilities: `getRSVPStats()`, `createWeeklyReportTrigger()`
-- Configuration stored in `CONFIG` object (spreadsheetId, adminEmail, screening details)
+**Code.gs** (Google Apps Script - single file deployment)
+- Entry points: `doPost(e)` for webhooks, `doGet(e)` for health checks
+- Main handler: `handleRSVPSubmission(e)` processes form data
+- Data layer: `saveToSpreadsheet()`, `createRSVPSheet()`
+- Email layer: `sendConfirmationEmail()`, `sendAdminNotification()`, `sendWeeklyReport()`
+- Calendar: `createCalendarEvent()` generates .ics embedded in emails
+- Admin utils: `getRSVPStats()`, `createWeeklyReportTrigger()`
+- Config: All settings in `CONFIG` object (lines 9-21) - **update spreadsheetId before deployment**
 
-**calendar-integration.js** (Utility module)
-- Generates .ics calendar files: `generateICSFile()`
-- Creates platform-specific calendar links: `createGoogleCalendarLink()`, `createOutlookCalendarLink()`
-- Enhanced event descriptions with reminders
-- Multi-platform calendar support (Google, Outlook, .ics download)
+**Webflow Integration**
+- Webhook URL: Generated after deploying Code.gs as web app
+- Payload: JSON POST with {name, email, phone, specialRequests, source}
+- Required fields: name, email (validated in Code.gs:66-68)
 
-**webflow-form-integration.html** (Frontend)
-- Embedded RSVP form with validation
-- Required fields: name, email, partySize
-- Optional fields: phone, specialRequests, source (hidden)
-- Client-side phone formatting and form state management
-- Success/loading states for UX
+**Google Sheets Schema** (auto-created by `createRSVPSheet()`)
+- Columns: Timestamp | Name | Email | Phone | Special Requests | Source | Status
+- Status values: "confirmed" (default) | "pending" | "cancelled"
 
-**admin-dashboard.html** (Management interface)
-- Statistics dashboard (total RSVPs, attendees, confirmed, weekly count)
-- RSVP table with search/filter capabilities
-- Quick actions: refresh, export, weekly reports
-- Sample data for demonstration (replace with real Google Sheets API integration)
+### Frontend Components
 
-### Database Schema (Google Sheets)
-| Column | Type | Description |
-|--------|------|-------------|
-| Timestamp | Date | Form submission time |
-| Name | Text | Attendee full name |
-| Email | Email | Contact email |
-| Phone | Text | Phone number (optional) |
-| Party Size | Number | Number of attendees |
-| Special Requests | Text | Accessibility/dietary needs |
-| Source | Text | Traffic source |
-| Status | Text | confirmed/pending/cancelled |
+**webflow-form-integration.html** - Form for embedding in Webflow
+- Client-side validation and phone formatting
+- Submits to webhook URL (configure in Webflow settings)
+
+**admin-dashboard.html** - Standalone dashboard (requires Google Sheets API key)
+- Displays RSVP stats and table
+- Uses sample data by default - connect to Sheets API for production
+
+**landing.html / confirmation.html** - Static pages (Relume-generated)
 
 ## Development Commands
 
-### Testing the Backend
+### Testing the Webhook
 ```bash
-# Test webhook with curl (replace YOUR_WEB_APP_URL)
-curl -X POST "YOUR_WEB_APP_URL" \
+# Quick test (uses test-webhook.sh with pre-configured URL)
+./test-webhook.sh
+
+# Custom test
+curl -X POST "YOUR_DEPLOYED_WEBHOOK_URL" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "phone": "555-123-4567",
-    "partySize": "2",
-    "specialRequests": "Test request"
-  }'
+  -d '{"name":"Test User","email":"test@example.com","phone":"555-1234","specialRequests":"Test"}'
 ```
 
-### Deployment Workflow
-
-**Google Apps Script Setup** (first-time deployment):
-1. Go to script.google.com
-2. Create new project: "Golden Wings RSVP Handler"
-3. Copy code from `golden-wings-backend.js`
-4. Update `CONFIG.spreadsheetId` with your Google Sheets ID
-5. Deploy as web app (Execute as: "Me", Access: "Anyone")
+### Deploying to Google Apps Script
+1. Go to [script.google.com](https://script.google.com)
+2. Create project: "Golden Wings RSVP Handler"
+3. Replace Code.gs content with `/Code.gs` from this repo
+4. Update `CONFIG.spreadsheetId` (line 10) with your Google Sheets ID
+5. Deploy → New deployment → Web app (Execute as: Me, Access: Anyone)
 6. Copy webhook URL for Webflow configuration
 
-**Webflow Integration**:
-1. Add webhook URL to Webflow site settings → Integrations → Webhooks
-2. Trigger: Form submissions
-3. Replace existing form with `webflow-form-integration.html` code
+Alternative: Use `deploy-webapp.sh` (requires clasp CLI setup)
 
-**Weekly Report Trigger** (run once in Apps Script):
+### Running Admin Functions
+In Apps Script editor:
 ```javascript
-createWeeklyReportTrigger() // Sends reports every Monday at 9 AM
+// View statistics
+getRSVPStats()
+
+// Enable weekly reports (run once)
+createWeeklyReportTrigger()
 ```
 
-## Configuration Requirements
+## Configuration Checklist
 
-### Required Updates Before Deployment
+Before deployment, update these values:
 
-**golden-wings-backend.js**:
-- `CONFIG.spreadsheetId` → Your Google Sheets ID
-- `CONFIG.screening.venue` → Update "TBD" with actual venue address
+**Code.gs**
+- `CONFIG.spreadsheetId` (line 10) → Your Google Sheets ID
+- `CONFIG.screening.venue` (line 18) → Replace "747 First Class Lounge..." with actual venue
+- `CONFIG.screening.duration` (line 19) → Update if film length changes
 
-**admin-dashboard.html**:
-- `CONFIG.spreadsheetId` → Your Google Sheets ID
-- `CONFIG.apiKey` → Google Sheets API key (for real-time dashboard)
+**admin-dashboard.html** (if using real-time dashboard)
+- `CONFIG.spreadsheetId` → Match Code.gs
+- `CONFIG.apiKey` → Google Sheets API key with read access
 
-**calendar-integration.js**:
-- Location field → Update "TBD" with venue details
+**Email Sending**
+- Default: Sends from your Google account
+- Production: Configure Google Workspace delegation for info@golden-wings-robyn.com
 
-## Email System
+## Important Technical Notes
 
-**Confirmation Email** (`sendConfirmationEmail`):
-- Sent from: `info@golden-wings-robyn.com` (requires Google Workspace delegation)
-- Includes: Screening details, party size, special requests, calendar download link
-- Branded HTML template with gradient header
-
-**Admin Notification** (`sendAdminNotification`):
-- Sent to: `CONFIG.adminEmail`
-- Contains: All RSVP details and link to Google Sheets
-
-**Weekly Reports** (`sendWeeklyReport`):
-- Automated via time-based trigger
-- Statistics: Total RSVPs, attendees, confirmed, new this week
-
-## Important Notes
-
-### Security
-- No sensitive data in client-side code
-- All credentials in Google Apps Script properties or CONFIG
-- SSL encryption via Google infrastructure
-- Form validation and sanitization in `handleRSVPSubmission()`
+### Calendar Event Timing
+- Embedded .ics file in confirmation email (Code.gs:178-194)
+- UTC times: 11:30 PM Oct 26 - 1:00 AM Oct 27 (accounts for PST 4:30 PM start)
+- Reminders: 1 day, 2 hours, 30 minutes before event
+- Location currently "TBD" - update before production
 
 ### Error Handling
-- Try-catch blocks in main handler with admin email notifications
-- Graceful fallback if sheet doesn't exist (auto-creates via `createRSVPSheet()`)
-- JSON error responses returned to webhook caller
+- All errors caught in `handleRSVPSubmission` try-catch (Code.gs:86-99)
+- Failures trigger admin email notification with full request dump
+- Returns JSON error responses to webhook caller
 
-### Calendar Event Details
-- Screening: October 26, 2025
-- Times: 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
-- Duration: 90 minutes
-- UTC conversion: startTime = 11:30 PM UTC (Oct 26), endTime = 1:00 AM UTC (Oct 27)
-- Reminders: 1 day before, 2 hours before, 30 minutes before
+### Security Considerations
+- No API keys or credentials in HTML files (all in Apps Script environment)
+- Webhook accepts anonymous POST (required for Webflow integration)
+- Form data sanitized before database insertion
+- Admin dashboard sample data only - requires API auth for real data
 
-## File Structure
+## Common Modifications
 
-```
-/
-├── golden-wings-backend.js          # Main backend (Google Apps Script)
-├── calendar-integration.js          # Calendar utilities
-├── webflow-form-integration.html    # RSVP form for Webflow
-├── admin-dashboard.html             # Admin management interface
-├── landing.html                     # Landing page (Relume-generated)
-├── confirmation.html                # Post-RSVP confirmation page
-├── setup-instructions.md            # Deployment guide
-├── deployment-checklist.md          # Feature overview and checklist
-├── docs/                            # Documentary context PDFs and transcripts
-└── .gitignore                       # Excludes credentials and env files
-```
+### Update Screening Time/Date
+Edit `CONFIG.screening` object (Code.gs:13-20) and calendar UTC times (Code.gs:184-185)
 
-## Common Tasks
+### Modify Email Template
+Edit HTML in `sendConfirmationEmail()` function (Code.gs:155-210)
 
-### View RSVP Statistics
-In Google Apps Script editor, run `getRSVPStats()` function to see current counts.
+### Change Required Fields
+Update validation logic (Code.gs:66-68) and Webflow form fields
 
-### Manual RSVP Entry
-Add rows directly to Google Sheets following the schema. Status defaults to "confirmed".
+### Add New Database Columns
+1. Update `createRSVPSheet()` headers (Code.gs:134-142)
+2. Update `saveToSpreadsheet()` append logic (Code.gs:115-123)
+3. Extract new fields in `handleRSVPSubmission()` (Code.gs:55-63)
 
-### Modify Email Templates
-Edit HTML in `sendConfirmationEmail()` function (lines 136-194 in golden-wings-backend.js).
+## File Reference
 
-### Change Screening Details
-Update `CONFIG` object at top of golden-wings-backend.js (lines 9-21).
+**Core Backend**
+- `Code.gs` - Complete Google Apps Script (deployed to script.google.com)
+- `appsscript.json` - Apps Script manifest (timezone, runtime config)
 
-## Documentation Resources
+**Frontend/Forms**
+- `webflow-form-integration.html` - Embeddable RSVP form
+- `admin-dashboard.html` - Management interface
+- `landing.html`, `confirmation.html` - Static pages
 
-- Setup guide: `setup-instructions.md`
-- Feature checklist: `deployment-checklist.md`
-- Documentary context: `docs/` directory (PDFs and transcripts)
-- GitHub instructions: `PUSH_TO_GITHUB.md`, `COPILOT_PUSH_INSTRUCTIONS.md`
+**Deployment Helpers**
+- `test-webhook.sh` - Quick webhook testing script
+- `deploy-webapp.sh` - Automated deployment via clasp (optional)
+
+**Documentation**
+- `setup-instructions.md` - Step-by-step deployment guide
+- `deployment-checklist.md` - Feature overview and launch checklist
+- `README.md` - Project overview and description

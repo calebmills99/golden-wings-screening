@@ -7,7 +7,6 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
 <div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
   <!-- Hero Section with Video Background -->
   <header class="relative overflow-hidden bg-gradient-to-r from-blue-900 to-blue-700 text-white">
-    <!-- Background Video -->
     <video
       autoplay
       loop
@@ -20,10 +19,11 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
       <source src="/videos/clouds-aerial.webm" type="video/webm">
     </video>
 
-    <!-- Dark overlay for text readability -->
     <div class="absolute inset-0 bg-black opacity-40"></div>
 
     <div class="relative container mx-auto px-6 py-24 text-center z-10">
+      <img src="/images/gwnewlogosmall.png" alt="Golden Wings logo" class="mx-auto mb-6 w-32 h-auto drop-shadow-lg" loading="lazy">
+
       <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
         {{ site.hero.title }}
       </h1>
@@ -43,7 +43,7 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
   <section class="container mx-auto px-6 py-16">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-4xl font-bold text-center mb-8 text-blue-900">{{ site.about.heading }}</h2>
-      {% for paragraph in content.about.paragraphs %}
+      {% for paragraph in site.about.paragraphs %}
       <p class="text-lg text-gray-700 leading-relaxed mb-6">
         {{ paragraph | safe }}
       </p>
@@ -91,14 +91,20 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
           </div>
 
           <div>
-            <label for="specialRequests" class="block text-sm font-medium text-gray-700 mb-2">Special Requests</label>
-            <textarea
-              id="specialRequests"
-              name="specialRequests"
-              rows="4"
+            <label for="source" class="block text-sm font-medium text-gray-700 mb-2">How did you hear about us?</label>
+            <input
+              type="text"
+              id="source"
+              name="source"
+              placeholder="Friend, Film Festival, Social Media, etc."
+              required
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            ></textarea>
+            >
           </div>
+
+          <!-- Google reCAPTCHA -->
+          <div class="g-recaptcha" data-sitekey="YOUR_PUBLIC_SITE_KEY"></div>
+          <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
           <button
             type="submit"
@@ -120,16 +126,24 @@ const WEBHOOK_URL = '{{ site.webhookUrl }}';
 document.getElementById('rsvp-form').addEventListener('submit', async function(e) {
   e.preventDefault();
 
+  const feedback = document.getElementById('form-feedback');
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+
+  const recaptchaResponse = grecaptcha.getResponse();
+  if (!recaptchaResponse) {
+    feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
+    feedback.textContent = 'Please complete the reCAPTCHA before submitting.';
+    feedback.classList.remove('hidden');
+    return;
+  }
+
   const formData = {
     name: document.getElementById('name').value,
     email: document.getElementById('email').value,
     phone: document.getElementById('phone').value,
-    specialRequests: document.getElementById('specialRequests').value,
-    source: 'website'
+    source: document.getElementById('source').value,
+    recaptcha: recaptchaResponse
   };
-
-  const feedback = document.getElementById('form-feedback');
-  const submitBtn = e.target.querySelector('button[type="submit"]');
 
   submitBtn.disabled = true;
   submitBtn.textContent = 'Submitting...';
@@ -146,6 +160,7 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
     feedback.classList.remove('hidden');
     e.target.reset();
+    grecaptcha.reset();
 
   } catch (error) {
     feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
@@ -156,3 +171,4 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
   }
 });
 </script>
+

@@ -41,4 +41,5 @@ node_modules/
 
 # Test files
 test-data.json
-sample-submissions.json
+sample-submissions.json_site/
+node_modules/

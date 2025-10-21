@@ -1,0 +1,26 @@
+{
+  "name": "golden-wings-screening",
+  "version": "1.0.0",
+  "description": "Complete backend automation system for managing RSVPs for the Golden Wings documentary screening.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy",
+    "start": "eleventy --serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebmills99/golden-wings-screening.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/calebmills99/golden-wings-screening/issues"
+  },
+  "homepage": "https://github.com/calebmills99/golden-wings-screening#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2"
+  }
+}

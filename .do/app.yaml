@@ -1,0 +1,9 @@
+name: golden-wings-screening
+region: nyc
+static_sites:
+  - name: web
+    source_dir: /
+    output_dir: _site
+    build_command: npm run build
+    routes:
+      - path: /

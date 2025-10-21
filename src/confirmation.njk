@@ -4,7 +4,11 @@ title: RSVP Confirmed - Golden Wings Screening
 description: Your RSVP for the Golden Wings documentary screening has been confirmed
 ---
 
-<div class="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center px-6">
+{% set event = siteConfig.event %}
+{% set form = siteConfig.form %}
+{% set theme = siteConfig.theme %}
+
+<div class="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center px-6 py-16">
   <div class="max-w-2xl mx-auto text-center">
     <div class="bg-white rounded-lg shadow-xl p-12">
       <div class="mb-6">
@@ -12,28 +16,28 @@ description: Your RSVP for the Golden Wings documentary screening has been confi
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
       </div>
-      
-      <h1 class="text-4xl font-bold text-gray-900 mb-4">You're All Set!</h1>
-      
+
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">You're All Set for Takeoff!</h1>
+
       <p class="text-xl text-gray-700 mb-8">
-        Your RSVP for the <strong>Golden Wings</strong> documentary screening has been confirmed.
+        Your RSVP for <strong>{{ event.title }}</strong> has been confirmed. {{ form.successMessage }}
       </p>
-      
+
       <div class="bg-blue-50 rounded-lg p-6 mb-8 text-left">
         <h2 class="text-2xl font-bold text-blue-900 mb-4">Event Details</h2>
         <div class="space-y-2 text-gray-700">
-          <p><strong>Date:</strong> Sunday, October 26, 2025</p>
-          <p><strong>Time:</strong> 4:30 PM PST / 6:30 PM CST / 7:30 PM EST</p>
-          <p><strong>Duration:</strong> 25 minutes</p>
-          <p><strong>Venue:</strong> 747 First Class Lounge</p>
+          <p><strong>Date:</strong> {{ event.date }}</p>
+          <p><strong>Time:</strong> {{ event.timePST }} PST / {{ event.timeCST }} CST / {{ event.timeEST }} EST</p>
+          <p><strong>Duration:</strong> {{ event.duration }}</p>
+          <p><strong>Venue:</strong> {{ event.venue }}</p>
           <p class="text-sm text-gray-600 mt-4">Your boarding pass will arrive 24 hours before the screening.</p>
         </div>
       </div>
-      
-      <p class="text-gray-600 mb-8">
-        A confirmation email with all the details and a calendar invite has been sent to your inbox.
+
+      <p class="text-gray-600 mb-8 supporting-copy">
+        {{ theme.missionStatement }} We can't wait to share Robyn Stewart's sky-high legacy with you.
       </p>
-      
+
       <a href="/" class="inline-block bg-blue-900 text-white font-bold px-8 py-4 rounded-lg hover:bg-blue-800 transform hover:scale-105 transition-all">
         Return to Home
       </a>

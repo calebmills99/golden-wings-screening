@@ -1,0 +1,55 @@
+/* Design tokens for Golden Wings - extracted for modular theming */
+:root {
+  --color-surface: #ffffff;
+  --color-on-surface: #0f172a;
+  --color-muted: #334155;
+  --color-border: #e2e8f0;
+  --color-primary: #1e3a8a;
+  --color-primary-soft: #3b82f6;
+  --color-highlight: #fbbf24;
+  --color-accent: #94a3b8;
+  --gradient-hero: linear-gradient(135deg, rgba(30, 58, 138, 0.85), rgba(12, 74, 110, 0.9));
+  --shadow-elevated: 0 30px 60px -40px rgba(15, 23, 42, 0.6);
+  --radius-large: 1.75rem;
+  --radius-medium: 1rem;
+  --radius-small: 0.75rem;
+}
+
+body[data-theme="skyward-courage"] {
+  --color-surface: #f8fafc;
+  --color-on-surface: #0f172a;
+  --color-muted: #1f2937;
+  --color-border: #dbeafe;
+  --color-primary: #1e3a8a;
+  --color-primary-soft: #3b82f6;
+  --color-highlight: #fbbf24;
+  --color-accent: #e0f2fe;
+  --gradient-hero: linear-gradient(140deg, rgba(30, 58, 138, 0.92), rgba(8, 47, 73, 0.9) 70%, rgba(251, 191, 36, 0.35));
+  --shadow-elevated: 0 35px 65px -30px rgba(30, 58, 138, 0.55);
+}
+
+body[data-theme="aurora-dusk"] {
+  --color-surface: #0f172a;
+  --color-on-surface: #f8fafc;
+  --color-muted: #cbd5f5;
+  --color-border: #1e3a8a;
+  --color-primary: #7c3aed;
+  --color-primary-soft: #a855f7;
+  --color-highlight: #facc15;
+  --color-accent: #4c1d95;
+  --gradient-hero: linear-gradient(120deg, rgba(76, 29, 149, 0.92), rgba(30, 64, 175, 0.85));
+  --shadow-elevated: 0 35px 65px -25px rgba(124, 58, 237, 0.55);
+}
+
+body[data-theme="golden-horizon"] {
+  --color-surface: #fffbeb;
+  --color-on-surface: #78350f;
+  --color-muted: #451a03;
+  --color-border: #fed7aa;
+  --color-primary: #ea580c;
+  --color-primary-soft: #f97316;
+  --color-highlight: #facc15;
+  --color-accent: #fde68a;
+  --gradient-hero: linear-gradient(140deg, rgba(248, 113, 113, 0.92), rgba(252, 211, 77, 0.85));
+  --shadow-elevated: 0 35px 70px -35px rgba(120, 53, 15, 0.55);
+}

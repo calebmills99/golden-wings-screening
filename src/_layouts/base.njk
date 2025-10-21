@@ -6,11 +6,26 @@
   <title>{% block title %}Golden Wings Documentary Screening{% endblock %}</title>
   <meta name="description" content="{% block description %}RSVP for the Golden Wings documentary screening on October 26, 2025{% endblock %}">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/design-tokens.css">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/video-background.css">
+  <link rel="stylesheet" href="/css/responsive.css">
 </head>
-<body>
+<body
+  data-theme="{{ siteConfig.theme.id }}"
+  data-backend-mode="{{ siteConfig.backend.mode }}"
+  data-api-base="{{ siteConfig.backend.apiBase }}"
+  data-fallback-webhook="{{ siteConfig.form.webhookUrl }}"
+  data-confirmation-url="{{ siteConfig.form.confirmationUrl }}"
+>
+  <!-- 100% privacy-first analytics -->
+  <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
+
+  <script id="site-config" type="application/json">{{ siteConfig | dump | safe }}</script>
+
   {{ content | safe }}
+  <script src="/js/theme.js"></script>
   <script src="/js/main.js"></script>
   {% if page.url == "/admin/" %}
   <script src="/js/admin.js"></script>

@@ -4,128 +4,169 @@ title: Golden Wings Documentary Screening - October 26, 2025
 description: Join us for the premiere screening of Golden Wings, featuring Robyn Stewart's incredible 50+ year career as an American Airlines flight attendant
 ---
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+{% set event = siteConfig.event %}
+{% set theme = siteConfig.theme %}
+{% set video = siteConfig.video %}
+
+<main class="min-h-screen bg-gradient-to-b from-blue-50/60 to-white">
   <!-- Hero Section with Video Background -->
-  <header class="relative overflow-hidden bg-gradient-to-r from-blue-900 to-blue-700 text-white min-h-screen flex items-center">
-    <!-- Background Video -->
-    <video
-      autoplay
-      loop
-      muted
-      playsinline
-      poster="/videos/poster.jpg"
-    >
-      <source src="/videos/clouds-aerial.mp4" type="video/mp4">
-      <source src="/videos/clouds-aerial.webm" type="video/webm">
-    </video>
+  <header class="hero relative overflow-hidden text-white min-h-screen flex items-center">
+    <div class="hero__media">
+      <video
+        class="{% if video.hideOnMobile %}hidden md:block{% endif %}"
+        autoplay
+        loop
+        muted
+        playsinline
+        poster="/videos/poster.jpg"
+      >
+        <source src="/videos/clouds-aerial.mp4" type="video/mp4">
+        <source src="/videos/clouds-aerial.webm" type="video/webm">
+      </video>
+    </div>
 
-    <!-- Dark overlay for text readability -->
-    <div class="absolute inset-0 bg-black opacity-50 z-10"></div>
+    <div class="hero__overlay"></div>
 
-    <div class="relative container mx-auto px-6 py-24 text-center z-20">
-      <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
-        Golden Wings
+    <div class="hero__content text-center md:text-left">
+      <div class="badge">
+        <span class="badge__icon">✈️</span>
+        {{ theme.tagline }}
+      </div>
+      <h1 class="hero__title animate-fade-in">
+        {{ event.title }}
       </h1>
-      <p class="text-xl md:text-2xl mb-4 opacity-90">
-        A 50-Year Journey Through Aviation History
+      <p class="hero__tagline">{{ theme.missionStatement }}</p>
+      <p class="hero__subtitle">
+        Screening {{ event.date }} · {{ event.timePST }} PST / {{ event.timeCST }} CST / {{ event.timeEST }} EST
       </p>
-      <p class="text-lg md:text-xl mb-8 opacity-75">
-        Screening: October 26, 2025 | 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
-      </p>
-      <a href="#rsvp" class="inline-block bg-white text-blue-900 font-bold px-8 py-4 rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all">
+      <a href="#rsvp" class="hero__cta">
         RSVP Now
+        <span aria-hidden="true">→</span>
       </a>
     </div>
   </header>
 
+  <!-- Thematic Highlights -->
+  <section class="theme-highlight">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="section-title">Skyward Courage</h2>
+      <p class="section-subtitle">
+        Inspired by Robyn Stewart's fearless service, we celebrate the courage that carried passengers safely across the globe for over five decades.
+      </p>
+      <div class="theme-highlight__grid">
+        {% for value in theme.values %}
+        <article class="value-card">
+          <h3 class="value-card__title">{{ value.title }}</h3>
+          <p class="value-card__description">{{ value.description }}</p>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
   <!-- About Section -->
-  <section class="container mx-auto px-6 py-16">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-4xl font-bold text-center mb-8 text-blue-900">About the Film</h2>
-      <p class="text-lg text-gray-700 leading-relaxed mb-6">
-        <strong>Golden Wings</strong> chronicles the remarkable career of Robyn Stewart, an American Airlines flight attendant
-        whose 50+ years in the skies witnessed the transformation of commercial aviation.
+  <section class="about-section">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="section-title">About the Film</h2>
+      <p>
+        <strong>{{ event.title }}</strong> chronicles the remarkable career of Robyn Stewart, an American Airlines flight attendant whose {{ event.yearsInService }} in the skies witnessed the transformation of commercial aviation.
       </p>
-      <p class="text-lg text-gray-700 leading-relaxed">
-        Through intimate interviews and archival footage, this documentary captures stories of courage, dedication,
-        and the evolution of an industry that connected the world.
+      <p>
+        Through intimate interviews and archival footage, this documentary captures stories of courage, dedication, and the evolution of an industry that connected the world.
       </p>
+      <blockquote>
+        "Each flight carried a story of courage and compassion. <strong>Golden Wings</strong> gathers them into one inspiring journey above the clouds."
+      </blockquote>
+      <div class="timeline">
+        <div class="timeline__item">
+          <strong>Premiere Boarding</strong>
+          Doors open 20 minutes before showtime with sky lounge refreshments inspired by Robyn's first transatlantic route.
+        </div>
+        <div class="timeline__item">
+          <strong>Feature Presentation</strong>
+          A {{ event.duration }} cinematic tribute to unwavering service, filmed across historic American Airlines destinations.
+        </div>
+        <div class="timeline__item">
+          <strong>Live Q&amp;A Touchdown</strong>
+          Stay after the credits for a live conversation with director Caleb Mills Stewart.
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- RSVP Section -->
-  <section id="rsvp" class="bg-blue-50 py-16">
-    <div class="container mx-auto px-6">
-      <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-xl p-8">
-        <h2 class="text-3xl font-bold text-center mb-8 text-blue-900">Reserve Your Seat</h2>
+  <section id="rsvp" class="bg-blue-50/60 py-16">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="rsvp-card">
+        <h2>Reserve Your Seat</h2>
 
         <form id="rsvp-form" class="space-y-6">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+          <div class="form-field">
+            <label for="name">Full Name *</label>
             <input
               type="text"
               id="name"
               name="name"
               required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              autocomplete="name"
             >
           </div>
 
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+          <div class="form-field">
+            <label for="email">Email Address *</label>
             <input
               type="email"
               id="email"
               name="email"
               required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              autocomplete="email"
             >
           </div>
 
-          <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+          <div class="form-field">
+            <label for="phone">Phone Number</label>
             <input
               type="tel"
               id="phone"
               name="phone"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              inputmode="tel"
+              autocomplete="tel"
             >
           </div>
 
-          <div>
-            <label for="specialRequests" class="block text-sm font-medium text-gray-700 mb-2">Special Requests</label>
+          <div class="form-field">
+            <label for="specialRequests">Special Requests</label>
             <textarea
               id="specialRequests"
               name="specialRequests"
               rows="3"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Dietary restrictions, accessibility needs, etc."
             ></textarea>
           </div>
 
-          <button
-            type="submit"
-            class="w-full bg-blue-900 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-800 transform hover:scale-105 transition-all"
-          >
+          <button type="submit" class="primary-button">
             Confirm RSVP
           </button>
         </form>
 
-        <p class="text-sm text-gray-600 text-center mt-6">
-          You'll receive a confirmation email with event details and calendar invite.
+        <p class="note text-center mt-6">
+          You'll receive a confirmation email with event details, a calendar invite, and priority boarding instructions.
         </p>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-8">
-    <div class="container mx-auto px-6 text-center">
+  <footer class="footer">
+    <div class="max-w-4xl mx-auto">
       <p class="text-lg mb-2">Golden Wings Documentary</p>
-      <p class="text-sm opacity-75">Directed by Caleb Mills Stewart</p>
-      <p class="text-sm opacity-75 mt-4">
-        <a href="https://gwingz.com" class="hover:text-blue-400">gwingz.com</a>
+      <p class="note">Directed by Caleb Mills Stewart</p>
+      <p class="note mt-4">
+        <a href="{{ siteConfig.contact.website }}" class="footer__link">{{ siteConfig.contact.website | replace('https://', '') }}</a>
+      </p>
+      <p class="note mt-2">
+        Contact the flight crew: <a href="mailto:{{ siteConfig.contact.email }}" class="footer__link">{{ siteConfig.contact.email }}</a>
       </p>
     </div>
   </footer>
-</div>
+</main>

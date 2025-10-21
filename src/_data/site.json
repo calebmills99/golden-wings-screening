@@ -1,0 +1,25 @@
+{
+  "hero": {
+    "title": "Golden Wings",
+    "subtitle": "A 50-Year Journey Through Aviation History",
+    "date": "October 26, 2025",
+    "runtime": "25 minutes"
+    "time": "4:30 PM PST / 6:30 PM CST / 7:30 PM EST",
+    "ctaText": "RSVP For Free Screening and Q&A Now"
+  },
+  "about": {
+    "heading": "About the Film",
+    "paragraphs": [
+      "Golden Wings chronicles the remarkable career of Robyn Stewart, an American Airlines flight attendant whose 50+ years in the skies witnessed the transformation of commercial aviation.",
+      "Through intimate interviews and archival footage, this documentary captures stories of courage, dedication, and the evolution of an industry that connected the world."
+    ]
+  },
+  "rsvp": {
+    "heading": "Reserve Your Seat",
+    "submitButton": "Confirm RSVP"
+  },
+  "contact": {
+    "email": "info@golden-wings-robyn.com"
+  },
+  "webhookUrl": "https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec"
+}

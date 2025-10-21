@@ -1,6 +1,6 @@
 ---
 layout: base.njk
-title: Golden Wings Documentary Screening - October 26, 2025
+title: Golden Wings Documentary Screening - {{ site.hero.date }}
 description: Join us for the premiere screening of Golden Wings, featuring Robyn Stewart's incredible 50+ year career as an American Airlines flight attendant
 ---
 
@@ -25,16 +25,16 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
 
     <div class="relative container mx-auto px-6 py-24 text-center z-10">
       <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
-        Golden Wings
+        {{ site.hero.title }}
       </h1>
       <p class="text-xl md:text-2xl mb-4 opacity-90">
-        A 50-Year Journey Through Aviation History
+        {{ site.hero.subtitle }}
       </p>
       <p class="text-lg md:text-xl mb-8 opacity-75">
-        Screening: October 26, 2025 | 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
+        Screening: {{ site.hero.date }} | {{ site.hero.time }}
       </p>
       <a href="#rsvp" class="inline-block bg-white text-blue-900 font-bold px-8 py-4 rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all">
-        RSVP Now
+        {{ site.hero.ctaText }}
       </a>
     </div>
   </header>
@@ -42,15 +42,12 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
   <!-- About Section -->
   <section class="container mx-auto px-6 py-16">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-4xl font-bold text-center mb-8 text-blue-900">About the Film</h2>
+      <h2 class="text-4xl font-bold text-center mb-8 text-blue-900">{{ site.about.heading }}</h2>
+      {% for paragraph in content.about.paragraphs %}
       <p class="text-lg text-gray-700 leading-relaxed mb-6">
-        <strong>Golden Wings</strong> chronicles the remarkable career of Robyn Stewart, an American Airlines flight attendant
-        whose 50+ years in the skies witnessed the transformation of commercial aviation.
+        {{ paragraph | safe }}
       </p>
-      <p class="text-lg text-gray-700 leading-relaxed">
-        Through intimate interviews and archival footage, this documentary captures stories of courage, dedication,
-        and the evolution of an industry that connected the world.
-      </p>
+      {% endfor %}
     </div>
   </section>
 
@@ -58,7 +55,7 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
   <section id="rsvp" class="bg-blue-50 py-16">
     <div class="container mx-auto px-6">
       <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-xl p-8">
-        <h2 class="text-3xl font-bold text-center mb-8 text-blue-900">Reserve Your Seat</h2>
+        <h2 class="text-3xl font-bold text-center mb-8 text-blue-900">{{ site.rsvp.heading }}</h2>
 
         <form id="rsvp-form" class="space-y-6">
           <div>
@@ -98,35 +95,64 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
             <textarea
               id="specialRequests"
               name="specialRequests"
-              rows="3"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Dietary restrictions, accessibility needs, etc."
+              rows="4"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             ></textarea>
           </div>
 
           <button
             type="submit"
-            class="w-full bg-blue-900 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-800 transform hover:scale-105 transition-all"
+            class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all"
           >
-            Confirm RSVP
+            {{ site.rsvp.submitButton }}
           </button>
-        </form>
 
-        <p class="text-sm text-gray-600 text-center mt-6">
-          You'll receive a confirmation email with event details and calendar invite.
-        </p>
+          <div id="form-feedback" class="hidden text-center p-4 rounded-lg"></div>
+        </form>
       </div>
     </div>
   </section>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-8">
-    <div class="container mx-auto px-6 text-center">
-      <p class="text-lg mb-2">Golden Wings Documentary</p>
-      <p class="text-sm opacity-75">Directed by Caleb Mills Stewart</p>
-      <p class="text-sm opacity-75 mt-4">
-        <a href="https://gwingz.com" class="hover:text-blue-400">gwingz.com</a>
-      </p>
-    </div>
-  </footer>
 </div>
+
+<script>
+const WEBHOOK_URL = '{{ site.webhookUrl }}';
+
+document.getElementById('rsvp-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const formData = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    specialRequests: document.getElementById('specialRequests').value,
+    source: 'website'
+  };
+
+  const feedback = document.getElementById('form-feedback');
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+      mode: 'no-cors'
+    });
+
+    feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
+    feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
+    feedback.classList.remove('hidden');
+    e.target.reset();
+
+  } catch (error) {
+    feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
+    feedback.textContent = 'Something went wrong. Please try again or email {{ site.contact.email }}';
+    feedback.classList.remove('hidden');
+    submitBtn.disabled = false;
+    submitBtn.textContent = '{{ site.rsvp.submitButton }}';
+  }
+});
+</script>

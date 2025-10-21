@@ -1,16 +1,6 @@
 module.exports = function(eleventyConfig) {
-  // Copy static assets
-  eleventyConfig.addPassthroughCopy("src/css");
-  eleventyConfig.addPassthroughCopy("src/js");
+  // Copy static assets (videos for your clouds background!)
   eleventyConfig.addPassthroughCopy("src/videos");
-
-  // Watch CSS files
-  eleventyConfig.addWatchTarget("src/css/");
-
-  // Add global data
-  eleventyConfig.addGlobalData("siteConfig", () => {
-    return require("./src/_data/siteConfig.json");
-  });
 
   return {
     dir: {

@@ -3,7 +3,7 @@
     "title": "Golden Wings",
     "subtitle": "A 50-Year Journey Through Aviation History",
     "date": "October 26, 2025",
-    "runtime": "25 minutes"
+    "runtime": "25 minutes",
     "time": "4:30 PM PST / 6:30 PM CST / 7:30 PM EST",
     "ctaText": "RSVP For Free Screening and Q&A Now"
   },
@@ -23,3 +23,4 @@
   },
   "webhookUrl": "https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec"
 }
+

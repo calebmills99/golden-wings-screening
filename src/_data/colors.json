@@ -1,0 +1,11 @@
+{
+  "comment": "Edit these colors to change your site's look!",
+  "primary": "#1e3a8a",
+  "primaryDark": "#1e40af",
+  "primaryLight": "#3b82f6",
+  "accent": "#60a5fa",
+  "background": "#f8fafc",
+  "text": "#1f2937",
+  "textLight": "#6b7280",
+  "white": "#ffffff"
+}

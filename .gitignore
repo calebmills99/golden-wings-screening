@@ -41,5 +41,10 @@ node_modules/
 
 # Test files
 test-data.json
-sample-submissions.json_site/
+sample-submissions.json
+
+# Build output
+_site/
+
+# Dependencies
 node_modules/

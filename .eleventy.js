@@ -7,12 +7,18 @@ module.exports = function(eleventyConfig) {
   // Watch CSS files
   eleventyConfig.addWatchTarget("src/css/");
 
+  // Add global data
+  eleventyConfig.addGlobalData("siteConfig", () => {
+    return require("./src/_data/siteConfig.json");
+  });
+
   return {
     dir: {
       input: "src",
       output: "_site",
       includes: "_includes",
-      layouts: "_layouts"
+      layouts: "_layouts",
+      data: "_data"
     },
     htmlTemplateEngine: "njk",
     markdownTemplateEngine: "njk"

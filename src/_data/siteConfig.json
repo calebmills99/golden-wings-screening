@@ -1,0 +1,30 @@
+{
+  "event": {
+    "title": "Golden Wings",
+    "subtitle": "A 50-Year Journey Through Aviation History",
+    "date": "October 26, 2025",
+    "timePST": "4:30 PM",
+    "timeCST": "6:30 PM",
+    "timeEST": "7:30 PM",
+    "venue": "747 First Class Lounge",
+    "duration": "25 minutes",
+    "description": "Golden Wings chronicles the remarkable career of Robyn Stewart, an American Airlines flight attendant whose 50+ years in the skies witnessed the transformation of commercial aviation."
+  },
+  "video": {
+    "enabled": true,
+    "overlayOpacity": 50,
+    "hideOnMobile": true
+  },
+  "form": {
+    "webhookUrl": "https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec",
+    "confirmationUrl": "/confirmation"
+  },
+  "contact": {
+    "email": "info@golden-wings-robyn.com",
+    "website": "https://gwingz.com"
+  },
+  "meta": {
+    "lastUpdated": "2025-10-20T00:00:00Z",
+    "version": "1.0.0"
+  }
+}

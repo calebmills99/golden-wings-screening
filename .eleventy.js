@@ -1,6 +1,7 @@
 module.exports = function(eleventyConfig) {
-  // Copy static assets (videos for your clouds background!)
-  eleventyConfig.addPassthroughCopy("src/videos");
+  // Copy assets and videos into _site
+  eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
+  eleventyConfig.addPassthroughCopy({ "src/videos": "videos" });
 
   return {
     dir: {
@@ -8,9 +9,9 @@ module.exports = function(eleventyConfig) {
       output: "_site",
       includes: "_includes",
       layouts: "_layouts",
-      data: "_data"
+      data: "_data",
     },
     htmlTemplateEngine: "njk",
-    markdownTemplateEngine: "njk"
+    markdownTemplateEngine: "njk",
   };
 };

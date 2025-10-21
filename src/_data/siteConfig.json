@@ -28,18 +28,14 @@
   },
   "theme": {
     "defaultStyle": "soaring-classic",
-    "keyMessage": "Soaring Through Five Decades of Innovation",
-    "headlineAccent": "From propeller days to jet-age hospitality, relive aviation's golden transformations.",
+    "keyMessage": "A 50-Year Journey Through Aviation",
+    "headlineAccent": "Join us for an exclusive screening",
     "featureCallouts": [
-      "Witness cabin culture evolve from silver service to modern hospitality.",
-      "Experience the technological leaps that redefined long-haul comfort.",
-      "Celebrate the crew members who kept passengers inspired above the clouds."
+      "Celebrating 50+ years of aviation excellence",
+      "An intimate look at the evolution of air travel",
+      "Stories of dedication and service above the clouds"
     ],
-    "mobileHighlights": [
-      "Glide-ready layout for phones and tablets",
-      "Accessible typography tuned for in-flight lighting",
-      "Touch-optimized RSVP controls"
-    ],
+    "mobileHighlights": [],
     "palette": {
       "soaring-classic": {
         "panel-backdrop": "rgba(15, 23, 42, 0.45)",

@@ -6,14 +6,13 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
 
 <div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
   <!-- Hero Section with Video Background -->
-  <header class="relative overflow-hidden bg-gradient-to-r from-blue-900 to-blue-700 text-white">
+  <header class="relative overflow-hidden bg-gradient-to-r from-blue-900 to-blue-700 text-white min-h-screen flex items-center">
     <!-- Background Video -->
     <video
       autoplay
       loop
       muted
       playsinline
-      class="absolute inset-0 w-full h-full object-cover"
       poster="/videos/poster.jpg"
     >
       <source src="/videos/clouds-aerial.mp4" type="video/mp4">
@@ -21,9 +20,9 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
     </video>
 
     <!-- Dark overlay for text readability -->
-    <div class="absolute inset-0 bg-black opacity-40"></div>
+    <div class="absolute inset-0 bg-black opacity-50 z-10"></div>
 
-    <div class="relative container mx-auto px-6 py-24 text-center z-10">
+    <div class="relative container mx-auto px-6 py-24 text-center z-20">
       <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
         Golden Wings
       </h1>

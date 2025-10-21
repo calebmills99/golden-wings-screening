@@ -9,11 +9,14 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/video-background.css">
 </head>
-<body>
+<body data-api-base="{{ siteConfig.api.baseUrl | default('') }}">
+  <!-- 100% privacy-first analytics -->
+  <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
   {{ content | safe }}
   <script src="/js/main.js"></script>
   {% if page.url == "/admin/" %}
   <script src="/js/admin.js"></script>
   {% endif %}
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
 </body>
 </html>

@@ -4,6 +4,62 @@ const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUV
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('rsvp-form');
+  const heroVideo = document.querySelector('header video');
+  const apiBase = (document.body?.dataset?.apiBase ?? '').replace(/\/$/, '');
+  const buildApiUrl = (path) => `${apiBase}${path}`;
+
+  const shouldDisableHeroVideo = () => {
+    return window.matchMedia('(max-width: 768px)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  };
+
+  const handleHeroVideo = () => {
+    if (!heroVideo) return;
+
+    if (shouldDisableHeroVideo()) {
+      heroVideo.pause();
+      heroVideo.removeAttribute('autoplay');
+      heroVideo.currentTime = 0;
+    } else {
+      heroVideo.setAttribute('autoplay', '');
+      const playPromise = heroVideo.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+          // ignore autoplay prevention errors
+        });
+      }
+    }
+  };
+
+  ['(max-width: 768px)', '(prefers-reduced-motion: reduce)'].forEach(query => {
+    const mediaQuery = window.matchMedia(query);
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleHeroVideo);
+    } else if (typeof mediaQuery.addListener === 'function') {
+      mediaQuery.addListener(handleHeroVideo);
+    }
+  });
+
+  handleHeroVideo();
+
+  const applyDynamicStyles = (config) => {
+    if (!config || !config.cssVariables) return;
+    const root = document.documentElement;
+    Object.entries(config.cssVariables).forEach(([variable, value]) => {
+      root.style.setProperty(variable, value);
+    });
+  };
+
+  fetch(buildApiUrl('/api/styles/default'))
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (data && data.payload) {
+        applyDynamicStyles(data.payload);
+      }
+    })
+    .catch(() => {
+      // API unavailable in static mode; safely ignore to keep the default palette
+    });
 
   if (form) {
     form.addEventListener('submit', async (e) => {

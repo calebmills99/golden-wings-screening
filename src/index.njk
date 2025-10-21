@@ -9,6 +9,7 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
   <header class="relative overflow-hidden bg-gradient-to-r from-blue-900 to-blue-700 text-white min-h-screen flex items-center">
     <!-- Background Video -->
     <video
+      class="hidden md:block"
       autoplay
       loop
       muted
@@ -29,6 +30,9 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
       <p class="text-xl md:text-2xl mb-4 opacity-90">
         A 50-Year Journey Through Aviation History
       </p>
+      <p class="text-base md:text-lg mb-8 uppercase tracking-[0.35em] text-blue-200/80">
+        Connecting Hearts at 35,000 Feet
+      </p>
       <p class="text-lg md:text-xl mb-8 opacity-75">
         Screening: October 26, 2025 | 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
       </p>
@@ -37,6 +41,49 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
       </a>
     </div>
   </header>
+
+  <!-- Signature Flight Theme Section -->
+  <section class="relative bg-white py-16">
+    <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_20%_20%,rgba(253,230,138,0.35),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.25),transparent_55%)]"></div>
+    <div class="relative container mx-auto px-6">
+      <div class="grid gap-10 md:grid-cols-2 items-center">
+        <div class="space-y-5">
+          <span class="inline-flex items-center space-x-2 uppercase tracking-wide text-xs font-semibold text-blue-800 bg-blue-100/70 rounded-full px-3 py-1">
+            <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+            <span>Key Theme</span>
+          </span>
+          <h2 class="text-3xl md:text-4xl font-bold text-blue-900 leading-tight">
+            Bridging Destinations Through Compassionate Service
+          </h2>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            Robyn Stewart's story is a celebration of how empathy, hospitality, and professionalism connect people across oceans.
+            We designed Golden Wings to echo that theme with warm sunrise hues, flowing lines inspired by aircraft contrails,
+            and adaptive layouts that keep the journey comfortable on every device.
+          </p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flight-theme-card">
+              <h3 class="flight-theme-card__title">Modular Flight Plans</h3>
+              <p class="flight-theme-card__copy">Curate landing pages by swapping palettes, typography, and layouts directly from the new content API.</p>
+            </div>
+            <div class="flight-theme-card">
+              <h3 class="flight-theme-card__title">Mobile Boarding Priority</h3>
+              <p class="flight-theme-card__copy">Gesture-friendly spacing, condensed controls, and lightweight media ensure a first-class mobile experience.</p>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="flight-theme-illustration">
+            <div class="flight-theme-illustration__halo"></div>
+            <div class="flight-theme-illustration__wing"></div>
+            <div class="flight-theme-illustration__trail"></div>
+          </div>
+          <p class="mt-6 text-sm text-gray-600 text-center md:text-left">
+            Inspired by the documentary's archival footage, the design blends aurora-like gradients with precise cockpit geometry.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- About Section -->
   <section class="container mx-auto px-6 py-16">
@@ -50,6 +97,27 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
         Through intimate interviews and archival footage, this documentary captures stories of courage, dedication,
         and the evolution of an industry that connected the world.
       </p>
+    </div>
+  </section>
+
+  <!-- Flight Log Timeline -->
+  <section class="py-16 bg-gradient-to-br from-blue-50 via-white to-amber-50">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-900">Flight Log Highlights</h2>
+      <div class="grid gap-8 md:grid-cols-3">
+        <article class="flight-log-card">
+          <h3 class="flight-log-card__title">1965 · First Call Sign</h3>
+          <p class="flight-log-card__body">Robyn earns her wings and boards the inaugural route connecting Chicago to the Pacific coast.</p>
+        </article>
+        <article class="flight-log-card">
+          <h3 class="flight-log-card__title">1987 · A Sky of Firsts</h3>
+          <p class="flight-log-card__body">From the first female-led international crew to the dawn of wide-body cabins, she charts a path for future leaders.</p>
+        </article>
+        <article class="flight-log-card">
+          <h3 class="flight-log-card__title">2025 · Legacy of Care</h3>
+          <p class="flight-log-card__body">The documentary captures her enduring belief that every seat in the cabin deserves a moment of compassion.</p>
+        </article>
+      </div>
     </div>
   </section>
 

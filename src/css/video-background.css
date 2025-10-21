@@ -17,19 +17,28 @@ header video::-webkit-media-controls {
   display: none !important;
 }
 
-/* Mobile video is now enabled by default */
-/* If you want to disable on mobile for performance, uncomment below:
-
+/* Replace video with gradient wash on mobile for performance */
 @media (max-width: 768px) {
   header video {
     display: none;
   }
+
   header {
-    background: linear-gradient(to right, #1e3a8a, #1e40af);
+    background: linear-gradient(160deg, #1e3a8a 0%, #1d4ed8 45%, #fbbf24 120%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(253, 230, 138, 0.25), transparent 60%),
+                radial-gradient(circle at 80% 10%, rgba(191, 219, 254, 0.35), transparent 55%);
+    opacity: 0.8;
+    pointer-events: none;
   }
 }
-
-*/
 
 /* Smooth fade-in for video */
 header video {

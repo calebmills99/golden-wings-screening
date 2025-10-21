@@ -26,5 +26,8 @@
   "meta": {
     "lastUpdated": "2025-10-20T00:00:00Z",
     "version": "1.0.0"
+  },
+  "api": {
+    "baseUrl": ""
   }
 }

@@ -6,14 +6,31 @@
   <title>{% block title %}Golden Wings Documentary Screening{% endblock %}</title>
   <meta name="description" content="{% block description %}RSVP for the Golden Wings documentary screening on October 26, 2025{% endblock %}">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/sections.css">
+  <link rel="stylesheet" href="/css/design-system.css">
   <link rel="stylesheet" href="/css/video-background.css">
 </head>
-<body>
+<body
+  data-api-base-url="{{ siteConfig.api.baseUrl | default('', true) }}"
+  data-default-theme="{{ siteConfig.theme.defaultStyle | default('soaring-classic', true) }}"
+  data-theme="{{ siteConfig.theme.defaultStyle | default('soaring-classic', true) }}"
+  data-contact-email="{{ siteConfig.contact.email | default('', true) }}"
+  data-fallback-webhook="{{ siteConfig.form.webhookUrl | default('', true) }}"
+  data-confirmation-url="{{ siteConfig.form.confirmationUrl | default('/confirmation', true) }}"
+>
+  <!-- 100% privacy-first analytics -->
+  <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <script>
+    window.__SITE_SETTINGS__ = {{ { theme: siteConfig.theme, video: siteConfig.video } | dump | safe }};
+  </script>
   {{ content | safe }}
+  <script src="/js/theme.js"></script>
   <script src="/js/main.js"></script>
   {% if page.url == "/admin/" %}
   <script src="/js/admin.js"></script>
   {% endif %}
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
 </body>
 </html>

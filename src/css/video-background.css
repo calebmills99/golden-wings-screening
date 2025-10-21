@@ -1,7 +1,7 @@
 /* Video Background Optimization */
 
 /* Ensure video covers entire hero and is properly centered */
-header video {
+video[data-hero-video] {
   position: absolute;
   top: 0;
   left: 0;
@@ -13,7 +13,7 @@ header video {
 }
 
 /* Prevent video controls from showing */
-header video::-webkit-media-controls {
+video[data-hero-video]::-webkit-media-controls {
   display: none !important;
 }
 
@@ -32,7 +32,7 @@ header video::-webkit-media-controls {
 */
 
 /* Smooth fade-in for video */
-header video {
+video[data-hero-video] {
   animation: fadeIn 1.5s ease-in;
 }
 

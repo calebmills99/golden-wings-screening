@@ -19,9 +19,41 @@
     "webhookUrl": "https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec",
     "confirmationUrl": "/confirmation"
   },
+  "api": {
+    "baseUrl": "https://golden-wings-backend.ondigitalocean.app"
+  },
   "contact": {
     "email": "info@golden-wings-robyn.com",
     "website": "https://gwingz.com"
+  },
+  "theme": {
+    "defaultStyle": "soaring-classic",
+    "keyMessage": "Soaring Through Five Decades of Innovation",
+    "headlineAccent": "From propeller days to jet-age hospitality, relive aviation's golden transformations.",
+    "featureCallouts": [
+      "Witness cabin culture evolve from silver service to modern hospitality.",
+      "Experience the technological leaps that redefined long-haul comfort.",
+      "Celebrate the crew members who kept passengers inspired above the clouds."
+    ],
+    "mobileHighlights": [
+      "Glide-ready layout for phones and tablets",
+      "Accessible typography tuned for in-flight lighting",
+      "Touch-optimized RSVP controls"
+    ],
+    "palette": {
+      "soaring-classic": {
+        "panel-backdrop": "rgba(15, 23, 42, 0.45)",
+        "panel-border": "rgba(255, 255, 255, 0.08)"
+      },
+      "twilight-runway": {
+        "panel-backdrop": "rgba(15, 23, 42, 0.6)",
+        "panel-border": "rgba(147, 197, 253, 0.22)"
+      },
+      "sunrise-cabin": {
+        "panel-backdrop": "rgba(124, 45, 18, 0.45)",
+        "panel-border": "rgba(249, 115, 22, 0.25)"
+      }
+    }
   },
   "meta": {
     "lastUpdated": "2025-10-20T00:00:00Z",

@@ -13,7 +13,7 @@
   "video": {
     "enabled": true,
     "overlayOpacity": 50,
-    "hideOnMobile": true
+    "hideOnMobile": false
   },
   "form": {
     "webhookUrl": "https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec",

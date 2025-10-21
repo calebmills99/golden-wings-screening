@@ -22,15 +22,17 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 - **`admin-dashboard.html`** - Admin dashboard for managing RSVPs
 
 ### Documentation
+- **`DASHBOARD_GUIDE.md`** - Complete guide to using the admin dashboard
 - **`setup-instructions.md`** - Step-by-step deployment guide
 - **`deployment-checklist.md`** - Complete feature overview and deployment steps
 
 ## ✨ Features
 
+- ✅ Clean, simplified design (5/10 intensity - easy to customize)
 - ✅ Automated confirmation emails
 - ✅ Google Sheets RSVP database
 - ✅ Calendar integration (Google, Outlook, .ics)
-- ✅ Real-time admin dashboard
+- ✅ Real-time admin dashboard at `/admin/`
 - ✅ Weekly RSVP reports
 - ✅ Export capabilities (CSV, PDF)
 - ✅ Mobile-responsive design
@@ -41,17 +43,30 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 1. **Set up Google Apps Script** (see `setup-instructions.md`)
 2. **Create Google Sheets database**
 3. **Configure Webflow webhook**
-4. **Deploy admin dashboard**
+4. **Deploy admin dashboard** - Access at `/admin/`
 
 Full deployment time: ~40 minutes
 
+### 🎛️ Managing Your Site
+
+**Admin Dashboard**: Navigate to `/admin/` to manage your event settings
+
+**Dashboard Guide**: See [`DASHBOARD_GUIDE.md`](DASHBOARD_GUIDE.md) for complete instructions on:
+- Accessing and using the admin dashboard
+- Making design changes via dashboard or code
+- Viewing RSVPs in Google Sheets
+- Deploying changes to production
+- Customizing colors, content, and layout
+
 ## 🔧 Technology Stack
 
-- Google Apps Script (Backend)
-- Google Sheets (Database)
-- Google Workspace (Email)
-- Webflow (Forms)
-- JavaScript/HTML/CSS (Frontend)
+- **Eleventy (11ty)** - Static site generator
+- **Tailwind CSS** - Utility-first CSS framework
+- **Google Apps Script** - Backend webhook handler
+- **Google Sheets** - Database for RSVPs
+- **Google Workspace** - Email delivery
+- **Nunjucks** - Templating engine
+- **JavaScript/HTML/CSS** - Frontend
 
 ## 📞 Support
 

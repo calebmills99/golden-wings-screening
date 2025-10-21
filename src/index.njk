@@ -39,17 +39,28 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
     </div>
   </header>
 
-  <!-- About Section -->
-  <section class="container mx-auto px-6 py-16">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-4xl font-bold text-center mb-8 text-blue-900">{{ site.about.heading }}</h2>
-      {% for paragraph in site.about.paragraphs %}
+<!-- About Section -->
+<section class="container mx-auto px-6 py-16">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-8 text-blue-900">{{ site.about.heading }}</h2>
+
+    {% for paragraph in site.about.paragraphs %}
       <p class="text-lg text-gray-700 leading-relaxed mb-6">
         {{ paragraph | safe }}
       </p>
-      {% endfor %}
+    {% endfor %}
+
+    <div class="flex justify-center mt-12">
+      <img
+        src="/images/gwnewlogosmall.png"
+        alt="Golden Wings logo"
+        class="w-40 h-auto drop-shadow-lg"
+        loading="lazy"
+      >
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- RSVP Section -->
   <section id="rsvp" class="bg-blue-50 py-16">

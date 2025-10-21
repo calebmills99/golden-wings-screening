@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "eleventy --serve",
     "build": "eleventy",
-    "start": "eleventy --serve"
+    "start": "eleventy --serve",
+    "backend:start": "node backend/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,15 @@
     "url": "https://github.com/calebmills99/golden-wings-screening/issues"
   },
   "homepage": "https://github.com/calebmills99/golden-wings-screening#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.11.5",
+    "zod": "^3.23.8"
+  },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2"
   }

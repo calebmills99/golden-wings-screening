@@ -42,3 +42,78 @@ input:focus, textarea:focus {
   border-color: var(--primary-blue-light);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+
+.mobile-flight-info {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  background: linear-gradient(90deg, rgba(30, 58, 138, 0.95), rgba(96, 165, 250, 0.95));
+  padding: 0.75rem 1.25rem;
+  display: none;
+}
+
+.mobile-flight-info__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.mobile-flight-info__action {
+  background: var(--scheme-background);
+  color: var(--primary-blue);
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.journey-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.75rem;
+  box-shadow: 0 20px 45px -25px rgba(30, 64, 175, 0.6);
+  border-top: 4px solid var(--primary-blue);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.journey-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 60px -30px rgba(30, 64, 175, 0.7);
+}
+
+.journey-card__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 0.75rem;
+}
+
+.journey-card__copy {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .mobile-flight-info {
+    display: block;
+  }
+
+  .journey-card {
+    text-align: left;
+  }
+
+  header .container {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}

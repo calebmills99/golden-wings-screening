@@ -29,14 +29,29 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
       <p class="text-xl md:text-2xl mb-4 opacity-90">
         A 50-Year Journey Through Aviation History
       </p>
+      <p id="hero-theme-tagline" class="text-lg md:text-xl mb-6 opacity-90 font-medium text-blue-100">
+        {{ siteConfig.theme.tagline }}
+      </p>
       <p class="text-lg md:text-xl mb-8 opacity-75">
         Screening: October 26, 2025 | 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
       </p>
-      <a href="#rsvp" class="inline-block bg-white text-blue-900 font-bold px-8 py-4 rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all">
-        RSVP Now
-      </a>
+      <div class="flex flex-col md:flex-row justify-center gap-4 md:gap-6">
+        <a href="#rsvp" class="inline-flex items-center justify-center bg-white text-blue-900 font-bold px-8 py-4 rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all">
+          RSVP Now
+        </a>
+        <a href="#flight-path" class="inline-flex items-center justify-center bg-blue-500/80 text-white font-semibold px-8 py-4 rounded-lg hover:bg-blue-500/90 transition-all">
+          Explore the Journey
+        </a>
+      </div>
     </div>
   </header>
+
+  <div class="mobile-flight-info" role="status" aria-live="polite">
+    <div class="mobile-flight-info__content">
+      <span class="mobile-flight-info__message">{{ siteConfig.theme.mobileCta.message }}</span>
+      <a href="#rsvp" class="mobile-flight-info__action">{{ siteConfig.theme.mobileCta.button }}</a>
+    </div>
+  </div>
 
   <!-- About Section -->
   <section class="container mx-auto px-6 py-16">
@@ -50,6 +65,30 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
         Through intimate interviews and archival footage, this documentary captures stories of courage, dedication,
         and the evolution of an industry that connected the world.
       </p>
+    </div>
+  </section>
+
+  <!-- Flight Path Section -->
+  <section id="flight-path" class="bg-gradient-to-b from-white to-blue-50 py-16">
+    <div class="container mx-auto px-6">
+      <div class="max-w-5xl mx-auto text-center mb-12">
+        <h2 class="text-4xl font-bold text-blue-900 mb-4">Flight Path of Commercial Transformation</h2>
+        <p class="text-lg text-gray-700">Follow Robyn Stewart's aerial odyssey as she navigates the evolution of passenger flight&mdash;from silver-service hospitality to the connected cabin era.</p>
+      </div>
+      <div class="journey-grid">
+        <article class="journey-card">
+          <h3 class="journey-card__title">1970s &mdash; Jet Age Elegance</h3>
+          <p class="journey-card__copy">Experience the glamour of wide-body introductions and the debut of the 747 lounge where Robyn welcomed travelers with sky-high service.</p>
+        </article>
+        <article class="journey-card">
+          <h3 class="journey-card__title">1990s &mdash; Global Connectivity</h3>
+          <p class="journey-card__copy">Relive the moment airlines embraced satellite routes and Robyn guided passengers through a rapidly shrinking world.</p>
+        </article>
+        <article class="journey-card">
+          <h3 class="journey-card__title">Today &mdash; Future-Ready Flight</h3>
+          <p class="journey-card__copy">Discover how her dedication set the stage for inclusive, tech-forward cabins designed for every traveler.</p>
+        </article>
+      </div>
     </div>
   </section>
 

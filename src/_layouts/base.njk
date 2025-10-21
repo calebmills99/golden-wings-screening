@@ -10,10 +10,20 @@
   <link rel="stylesheet" href="/css/video-background.css">
 </head>
 <body>
+  <!-- 100% privacy-first analytics -->
+  <script data-collect-dnt="true" async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif?collect-dnt=true" alt="" referrerpolicy="no-referrer-when-downgrade"/></noscript>
   {{ content | safe }}
+  <script>
+    window.GW_CONFIG = {
+      backend: {{ siteConfig.backend | dump | safe }},
+      theme: {{ siteConfig.theme | dump | safe }}
+    };
+  </script>
   <script src="/js/main.js"></script>
   {% if page.url == "/admin/" %}
   <script src="/js/admin.js"></script>
   {% endif %}
+  <!-- 100% privacy-first analytics -->
 </body>
 </html>

@@ -137,14 +137,6 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
   const feedback = document.getElementById('form-feedback');
   const submitBtn = e.target.querySelector('button[type="submit"]');
 
-  const recaptchaResponse = grecaptcha.getResponse();
-  if (!recaptchaResponse) {
-    feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
-    feedback.textContent = 'Please complete the reCAPTCHA before submitting.';
-    feedback.classList.remove('hidden');
-    return;
-  }
-
   submitBtn.disabled = true;
   submitBtn.textContent = 'Submitting...';
 
@@ -156,7 +148,7 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
         source: document.getElementById('source').value,
-        recaptcha: recaptchaResponse
+        'hp-check': document.getElementById('hp-check').value
       }),
       mode: 'no-cors'
     });
@@ -165,7 +157,6 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
     feedback.classList.remove('hidden');
     e.target.reset();
-    grecaptcha.reset();
 
   } catch (error) {
     feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
@@ -175,6 +166,3 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     submitBtn.textContent = '{{ site.rsvp.submitButton }}';
   }
 });
-</script>
-
-<--help trigger redeploy Tue Oct 21 11:12:57 AM PDT 2025 -->

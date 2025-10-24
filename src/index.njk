@@ -132,55 +132,48 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
 const WEBHOOK_URL = '{{ site.webhookUrl }}';
 
 document.getElementById('rsvp-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
+  e.preventDefault();
 
-  const feedback = document.getElementById('form-feedback');
-  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const feedback = document.getElementById('form-feedback');
+  const submitBtn = e.target.querySelector('button[type="submit"]');
 
-  // 🗑️ REMOVED: No more grecaptcha checks needed.
+  const recaptchaResponse = grecaptcha.getResponse();
+  if (!recaptchaResponse) {
+    feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
+    feedback.textContent = 'Please complete the reCAPTCHA before submitting.';
+    feedback.classList.remove('hidden');
+    return;
+  }
 
-  const formData = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    phone: document.getElementById('phone').value,
-    source: document.getElementById('source').value,
-    // 🍯 HONEYPOT FIELD ADDED TO PAYLOAD
-    'hp-check': document.getElementById('hp-check').value // Value will be empty for humans
-  };
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting...';
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      body: new URLSearchParams({
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        source: document.getElementById('source').value,
+        recaptcha: recaptchaResponse
+      }),
+      mode: 'no-cors'
+    });
 
-  try {
-    // IMPORTANT: The server script will check the 'hp-check' field first.
-    const response = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      
-      body: new URLSearchParams({
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      phone: document.getElementById('phone').value,
-      source: document.getElementById('source').value,
-      recaptcha: grecaptcha.getResponse()
-    }),
-      mode: 'no-cors'
-    });
-    
-    // NOTE: Because mode is 'no-cors', we can't reliably check the response body, 
-    // but the script execution itself is what matters.
+    feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
+    feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
+    feedback.classList.remove('hidden');
+    e.target.reset();
+    grecaptcha.reset();
 
-    feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
-    feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
-    feedback.classList.remove('hidden');
-    e.target.reset();
-
-  } catch (error) {
-    feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
-    feedback.textContent = 'Something went wrong. Please try again or email {{ site.contact.email }}';
-    feedback.classList.remove('hidden');
-    submitBtn.disabled = false;
-    submitBtn.textContent = '{{ site.rsvp.submitButton }}';
-  }
+  } catch (error) {
+    feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
+    feedback.textContent = 'Something went wrong. Please try again or email {{ site.contact.email }}';
+    feedback.classList.remove('hidden');
+    submitBtn.disabled = false;
+    submitBtn.textContent = '{{ site.rsvp.submitButton }}';
+  }
 });
 </script>
 

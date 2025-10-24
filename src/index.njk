@@ -145,26 +145,45 @@ const WEBHOOK_URL = '{{ site.webhookUrl }}';
 document.getElementById('rsvp-form').addEventListener('submit', async function(e) {
   e.preventDefault();
 
+  console.log('🚀 STEP 1: Form submitted');
+
   const feedback = document.getElementById('form-feedback');
   const submitBtn = e.target.querySelector('button[type="submit"]');
+
+  // Capture form data
+  const formData = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    source: document.getElementById('source').value,
+    specialRequests: document.getElementById('specialRequests').value,
+    'hp-check': document.getElementById('hp-check').value
+  };
+
+  console.log('📝 STEP 2: Form data captured:', formData);
+  console.log('🍯 STEP 3: Honeypot value:', formData['hp-check'], '(should be empty)');
 
   submitBtn.disabled = true;
   submitBtn.textContent = 'Submitting...';
 
+  const payload = JSON.stringify(formData);
+  console.log('📦 STEP 4: JSON payload created:', payload);
+  console.log('🎯 STEP 5: Sending to webhook:', WEBHOOK_URL);
+
   try {
+    const startTime = Date.now();
+    console.log('⏱️ STEP 6: Fetch started at', new Date(startTime).toLocaleTimeString());
+
     const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        source: document.getElementById('source').value,
-        specialRequests: document.getElementById('specialRequests').value,
-        'hp-check': document.getElementById('hp-check').value
-      }),
+      body: payload,
       mode: 'no-cors'
     });
+
+    const endTime = Date.now();
+    console.log('✅ STEP 7: Fetch completed in', (endTime - startTime), 'ms');
+    console.log('📨 STEP 8: Response received (no-cors mode, can\'t read body)');
 
     feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
     feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
@@ -174,7 +193,10 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     submitBtn.disabled = false;
     submitBtn.textContent = '{{ site.rsvp.submitButton }}';
 
+    console.log('🎉 STEP 9: Frontend complete - Check Google Apps Script logs now!');
+
   } catch (error) {
+    console.error('❌ ERROR at fetch:', error);
     feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
     feedback.textContent = 'Something went wrong. Please try again or email {{ site.contact.email }}';
     feedback.classList.remove('hidden');
@@ -182,3 +204,5 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     submitBtn.textContent = '{{ site.rsvp.submitButton }}';
   }
 });
+
+console.log('✨ Form handler loaded and ready');

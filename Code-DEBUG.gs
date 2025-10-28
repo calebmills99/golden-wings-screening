@@ -54,6 +54,12 @@ function handleRSVPSubmission(e) {
 
     console.log('✅ BACKEND STEP 5: Form data parsed:', JSON.stringify(formData));
 
+    // Check if this is watch page analytics
+    if (formData.type === 'watch_access') {
+      console.log('🎬 WATCH ANALYTICS: Routing to watch handler');
+      return handleWatchAccess(formData);
+    }
+
     // Honeypot check
     if (formData['hp-check'] && formData['hp-check'].length > 0) {
       console.warn('🍯 BACKEND STEP 6: HONEYPOT TRIGGERED - Bot detected');
@@ -286,4 +292,78 @@ function createCalendarEvent(rsvpData) {
   } catch (error) {
     console.error('❌ Calendar creation failed:', error);
   }
+}
+
+function handleWatchAccess(formData) {
+  console.log('🎬 WATCH STEP 1: Processing watch access');
+
+  try {
+    // Check honeypot
+    if (formData['hp-check-watch'] && formData['hp-check-watch'].length > 0) {
+      console.warn('🍯 WATCH STEP 2: HONEYPOT TRIGGERED - Bot blocked');
+      return ContentService
+        .createTextOutput(JSON.stringify({ success: false, error: 'Bot detected' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    console.log('✅ WATCH STEP 2: Honeypot check passed');
+
+    // Prepare watch analytics data
+    const watchData = {
+      timestamp: new Date(),
+      email: sanitizeInput(formData.email || 'anonymous'),
+      page: formData.page || 'watch',
+      submittedTimestamp: formData.timestamp || new Date().toISOString()
+    };
+
+    console.log('📊 WATCH STEP 3: Watch data prepared:', JSON.stringify(watchData));
+
+    // Save to Watch Analytics sheet
+    console.log('💾 WATCH STEP 4: Saving to Watch Analytics sheet...');
+    saveWatchAnalytics(watchData);
+    console.log('✅ WATCH STEP 5: Watch analytics saved');
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, message: 'Access logged' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    console.error('❌ WATCH ERROR:', error);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function saveWatchAnalytics(watchData) {
+  console.log('💾 SHEET WATCH STEP 1: Opening spreadsheet...');
+  const ss = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  console.log('✅ SHEET WATCH STEP 2: Spreadsheet opened');
+
+  // Get or create Watch Analytics sheet
+  let sheet = ss.getSheetByName('Watch Analytics');
+  if (!sheet) {
+    console.log('📝 SHEET WATCH STEP 3: Creating new Watch Analytics sheet...');
+    sheet = ss.insertSheet('Watch Analytics');
+    sheet.getRange(1, 1, 1, 4).setValues([[
+      'Timestamp',
+      'Email',
+      'Page',
+      'Submitted Timestamp'
+    ]]);
+    sheet.getRange(1, 1, 1, 4).setFontWeight('bold').setBackground('#f0f0f0');
+    sheet.autoResizeColumns(1, 4);
+    console.log('✅ SHEET WATCH STEP 4: Sheet created with headers');
+  } else {
+    console.log('✅ SHEET WATCH STEP 3: Watch Analytics sheet found');
+  }
+
+  // Append row
+  console.log('💾 SHEET WATCH STEP 5: Appending row...');
+  sheet.appendRow([
+    watchData.timestamp,
+    watchData.email,
+    watchData.page,
+    watchData.submittedTimestamp
+  ]);
+  console.log('✅ SHEET WATCH STEP 6: Row appended successfully');
 }

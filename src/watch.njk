@@ -14,39 +14,116 @@ description: Watch the Golden Wings documentary screening
       <p class="text-blue-200 text-lg">A 50-Year Journey Through Aviation History</p>
     </div>
 
-    <!-- Video Player -->
-    <div class="bg-black rounded-lg overflow-hidden shadow-2xl mb-8" style="aspect-ratio: 16/9;">
-      <iframe
-        width="100%"
-        height="100%"
-        src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
-        title="Golden Wings Documentary"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
-        class="w-full h-full"
-      ></iframe>
+    <!-- Email Gate -->
+    <div id="email-gate" class="bg-white/10 backdrop-blur-sm rounded-lg p-8 mb-8 border border-white/20">
+      <h2 class="text-2xl font-bold text-white text-center mb-4">Access Your Screening</h2>
+      <p class="text-blue-200 text-center mb-6">Enter your email to begin watching</p>
+
+      <form id="access-form" class="max-w-md mx-auto">
+        <div class="mb-4">
+          <input
+            type="email"
+            id="viewer-email"
+            name="viewer-email"
+            required
+            placeholder="your.email@example.com"
+            class="w-full px-4 py-3 rounded-lg bg-white/90 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <!-- Honeypot -->
+        <div style="position: absolute; left: -9999px; opacity: 0;">
+          <label for="hp-check-watch">Do not fill this field</label>
+          <input type="text" id="hp-check-watch" name="hp-check-watch" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-lg transition-colors duration-200 shadow-lg"
+        >
+          Access Screening ✈️
+        </button>
+      </form>
     </div>
 
-    <!-- Instructions -->
-    <div class="text-center mb-6">
-      <p class="text-white text-xl leading-relaxed">
-        Welcome to the GWINGZ in-flight entertainment system.<br>
-        Just push play!<br>
-        Have questions?
-      </p>
-    </div>
+    <!-- Video Player (hidden until email submitted) -->
+    <div id="video-container" class="hidden">
+      <div class="bg-black rounded-lg overflow-hidden shadow-2xl mb-8" style="aspect-ratio: 16/9;">
+        <iframe
+          width="100%"
+          height="100%"
+          src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
+          title="Golden Wings Documentary"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+          class="w-full h-full"
+        ></iframe>
+      </div>
 
-    <!-- Call Button -->
-    <div class="text-center">
-      <a
-        href="mailto:info@golden-wings-robyn.com"
-        class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-colors duration-200 shadow-lg"
-      >
-        📞 Call Button
-      </a>
+      <!-- Instructions -->
+      <div class="text-center mb-6">
+        <p class="text-white text-xl leading-relaxed">
+          Welcome to the GWINGZ in-flight entertainment system.<br>
+          Just push play!<br>
+          Have questions?
+        </p>
+      </div>
+
+      <!-- Call Button -->
+      <div class="text-center">
+        <a
+          href="mailto:info@golden-wings-robyn.com"
+          class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-colors duration-200 shadow-lg"
+        >
+          📞 Call Button
+        </a>
+      </div>
     </div>
 
   </div>
 </div>
+
+<script>
+const ANALYTICS_WEBHOOK = '{{ site.webhookUrl }}'; // Will use same webhook for now
+
+document.getElementById('access-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('viewer-email').value;
+  const honeypot = document.getElementById('hp-check-watch').value;
+
+  // Check honeypot (bots fill this)
+  if (honeypot) {
+    console.log('🍯 Honeypot triggered - blocking bot');
+    return;
+  }
+
+  console.log('📊 Logging viewer:', email);
+
+  // Log to Google Sheets (fire and forget)
+  try {
+    fetch(ANALYTICS_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'watch_access',
+        email: email,
+        timestamp: new Date().toISOString(),
+        page: 'watch'
+      }),
+      mode: 'no-cors'
+    });
+  } catch (error) {
+    console.error('Analytics logging failed:', error);
+  }
+
+  // Hide gate, show video
+  document.getElementById('email-gate').classList.add('hidden');
+  document.getElementById('video-container').classList.remove('hidden');
+  document.getElementById('video-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+console.log('✨ Watch page loaded');
+</script>

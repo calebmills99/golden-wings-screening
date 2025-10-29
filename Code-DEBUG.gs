@@ -216,17 +216,36 @@ function createRSVPSheet(spreadsheet) {
 }
 
 function sendConfirmationEmail(rsvpData) {
-  const subject = 'Your Golden Wings Documentary Screening RSVP Confirmed';
+  const subject = '🎬 Watch Golden Wings Documentary Now!';
 
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Thank you, ${rsvpData.name}!</h2>
-      <p>Your RSVP has been confirmed.</p>
-      <p><strong>Event:</strong> Golden Wings Documentary Screening</p>
+      <p>Your RSVP has been confirmed!</p>
+
+      <div style="background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0; color: white;">✈️ Watch the Documentary Now</h3>
+        <p style="font-size: 16px;">The Golden Wings documentary is ready to watch!</p>
+        <p style="text-align: center; margin: 20px 0;">
+          <a href="https://gwingz.com/watch" style="display: inline-block; background-color: white; color: #1e3a8a; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+            WATCH NOW
+          </a>
+        </p>
+        <p style="font-size: 14px; color: #e0e7ff;">Just enter your email and hit play. It's that simple!</p>
+      </div>
+
+      <p><strong>Event Details:</strong></p>
       <p><strong>Date:</strong> October 26, 2025</p>
       <p><strong>Time:</strong> ${CONFIG.screening.timePST} PST / ${CONFIG.screening.timeCST} CST / ${CONFIG.screening.timeEST} EST</p>
       ${rsvpData.specialRequests ? `<p><strong>Your note:</strong> ${rsvpData.specialRequests}</p>` : ''}
-      <p>See you there!</p>
+
+      <p style="margin-top: 30px;">The film chronicles Robyn Stewart's incredible 50+ year journey as an American Airlines flight attendant, capturing stories of courage, dedication, and the evolution of aviation.</p>
+
+      <p>See you there! ✈️</p>
+
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+      <p style="font-size: 12px; color: #6b7280;">Golden Wings Documentary<br>
+      <a href="https://www.golden-wings-robyn.com" style="color: #1e3a8a;">www.golden-wings-robyn.com</a></p>
     </div>
   `;
 

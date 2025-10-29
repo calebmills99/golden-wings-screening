@@ -77,7 +77,7 @@ def upload_video(youtube, video_file, title, description, privacy_status='unlist
 
 if __name__ == '__main__':
     # Video details
-    VIDEO_FILE = '/mnt/d/Film Projects/Golden Wings/screening_promo/720p_web_compressed.mp4'
+    VIDEO_FILE = '/mnt/d/Film Projects/Golden Wings/screening_promo/GE50YFP_720p_web.mp4'
     TITLE = 'Golden Wings - A 50-Year Journey Through Aviation History'
     DESCRIPTION = '''Golden Wings chronicles the remarkable career of Robyn Stewart, an American Airlines flight attendant whose 50+ years in the skies witnessed the transformation of commercial aviation.
 

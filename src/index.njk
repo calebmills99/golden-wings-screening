@@ -1,7 +1,7 @@
 ---
 layout: base.njk
-title: Golden Wings Documentary Screening - {{ site.hero.date }}
-description: Join us for the premiere screening of Golden Wings, featuring Robyn Stewart's incredible 50+ year career as an American Airlines flight attendant
+title: Watch Golden Wings Documentary - {{ site.hero.date }}
+description: Watch Golden Wings documentary featuring Robyn Stewart's incredible 50+ year career as an American Airlines flight attendant. Free streaming available now.
 ---
 
 <div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -30,7 +30,7 @@ description: Join us for the premiere screening of Golden Wings, featuring Robyn
         {{ site.hero.subtitle }}
       </p>
       <p class="text-lg md:text-xl mb-8 opacity-75">
-        Screening: {{ site.hero.date }} | {{ site.hero.time }}
+        {{ site.hero.date }} | {{ site.hero.runtime }}
       </p>
       <a href="#rsvp" class="inline-block bg-white text-blue-900 font-bold px-8 py-4 rounded-lg hover:bg-blue-50 transform hover:scale-105 transition-all">
         {{ site.hero.ctaText }}
@@ -186,7 +186,7 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     console.log('📨 STEP 8: Response received (no-cors mode, can\'t read body)');
 
     feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
-    feedback.textContent = 'Thank you! Your RSVP has been confirmed. Check your email for details.';
+    feedback.textContent = 'Success! Check your email for the watch link. You can start watching immediately!';
     feedback.classList.remove('hidden');
     feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
     e.target.reset();

@@ -2,10 +2,10 @@
   "hero": {
     "title": "Golden Wings",
     "subtitle": "A 50-Year Journey Through Aviation History",
-    "date": "October 26, 2025",
+    "date": "Available Now",
     "runtime": "25 minutes",
-    "time": "4:30 PM PST / 6:30 PM CST / 7:30 PM EST",
-    "ctaText": "RSVP For Free Screening and Q&A Now"
+    "time": "",
+    "ctaText": "Watch Free Now"
   },
   "about": {
     "heading": "About the Film",
@@ -15,8 +15,8 @@
     ]
   },
   "rsvp": {
-    "heading": "Reserve Your Seat",
-    "submitButton": "Confirm RSVP"
+    "heading": "Get Instant Access",
+    "submitButton": "Get Watch Link"
   },
   "contact": {
     "email": "info@golden-wings-robyn.com"

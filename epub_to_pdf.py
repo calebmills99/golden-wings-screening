@@ -27,8 +27,8 @@ try:
     from lxml import html
     from weasyprint import HTML
 except ImportError as e:
-    print(f"❌ Error: Missing required library - {e}")
-    print("\n📦 Please install required dependencies:")
+    print(f"Error: Missing required library - {e}")
+    print("\nPlease install required dependencies:")
     print("   pip install ebooklib lxml weasyprint")
     print("\nAlternatively, on Ubuntu/Debian:")
     print("   sudo apt-get install python3-lxml python3-weasyprint")
@@ -74,7 +74,7 @@ def extract_epub_content(epub_path):
                 chapter_html = html.tostring(tree, encoding='unicode', method='html')
                 chapters.append(chapter_html)
             except Exception as e:
-                print(f"⚠️  Warning: Could not parse chapter: {e}")
+                print(f"Warning: Could not parse chapter: {e}")
                 continue
     
     if not chapters:
@@ -188,32 +188,32 @@ def convert_epub_to_pdf(epub_path, pdf_path):
         epub_path: Path to input EPUB file
         pdf_path: Path to output PDF file
     """
-    print(f"📖 Reading EPUB file: {epub_path}")
+    print(f"Reading EPUB file: {epub_path}")
     
     # Extract content from EPUB
     title, author, chapters = extract_epub_content(epub_path)
     
-    print(f"📝 Title: {title}")
-    print(f"✍️  Author: {author}")
-    print(f"📄 Chapters found: {len(chapters)}")
+    print(f"Title: {title}")
+    print(f"Author: {author}")
+    print(f"Chapters found: {len(chapters)}")
     
     # Create HTML for PDF
-    print("🔧 Generating PDF content...")
+    print("Generating PDF content...")
     html_content = create_pdf_html(title, author, chapters)
     
     # Generate PDF
-    print(f"📄 Creating PDF: {pdf_path}")
+    print(f"Creating PDF: {pdf_path}")
     try:
         HTML(string=html_content).write_pdf(pdf_path)
     except Exception as e:
         raise RuntimeError(f"Failed to generate PDF: {e}")
     
-    print(f"✅ Successfully created PDF: {pdf_path}")
+    print(f"Successfully created PDF: {pdf_path}")
     
     # Show file size
     file_size = os.path.getsize(pdf_path)
     size_mb = file_size / (1024 * 1024)
-    print(f"📊 PDF size: {size_mb:.2f} MB")
+    print(f"PDF size: {size_mb:.2f} MB")
 
 
 def main():
@@ -255,11 +255,11 @@ Requirements:
     # Validate input file
     epub_path = Path(args.epub_file)
     if not epub_path.exists():
-        print(f"❌ Error: File not found: {epub_path}")
+        print(f"Error: File not found: {epub_path}")
         sys.exit(1)
     
     if not epub_path.suffix.lower() == '.epub':
-        print(f"⚠️  Warning: File does not have .epub extension: {epub_path}")
+        print(f"Warning: File does not have .epub extension: {epub_path}")
         response = input("Continue anyway? (y/n): ")
         if response.lower() != 'y':
             sys.exit(0)
@@ -272,23 +272,23 @@ Requirements:
     
     # Check if output file exists
     if pdf_path.exists():
-        print(f"⚠️  Warning: Output file already exists: {pdf_path}")
+        print(f"Warning: Output file already exists: {pdf_path}")
         response = input("Overwrite? (y/n): ")
         if response.lower() != 'y':
-            print("❌ Conversion cancelled")
+            print("Conversion cancelled")
             sys.exit(0)
     
     try:
         # Perform conversion
         convert_epub_to_pdf(str(epub_path), str(pdf_path))
-        print("\n🎉 Conversion completed successfully!")
+        print("\nConversion completed successfully!")
         
     except KeyboardInterrupt:
-        print("\n\n⚠️  Conversion interrupted by user")
+        print("\n\nConversion interrupted by user")
         sys.exit(1)
         
     except Exception as e:
-        print(f"\n❌ Error during conversion: {e}")
+        print(f"\nError during conversion: {e}")
         sys.exit(1)
 
 

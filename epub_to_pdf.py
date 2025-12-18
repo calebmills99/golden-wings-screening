@@ -16,6 +16,7 @@ Author: Golden Wings Documentary Project
 """
 
 import argparse
+import html as html_escape
 import os
 import sys
 from pathlib import Path
@@ -23,8 +24,8 @@ from pathlib import Path
 try:
     from ebooklib import epub
     import ebooklib
-    from lxml import etree, html
-    from weasyprint import HTML, CSS
+    from lxml import html
+    from weasyprint import HTML
 except ImportError as e:
     print(f"❌ Error: Missing required library - {e}")
     print("\n📦 Please install required dependencies:")
@@ -43,7 +44,7 @@ def extract_epub_content(epub_path):
         epub_path: Path to the EPUB file
         
     Returns:
-        tuple: (title, author, html_content)
+        tuple: (title, author, chapters) where chapters is a list of HTML strings
     """
     try:
         book = epub.read_epub(epub_path)
@@ -94,12 +95,16 @@ def create_pdf_html(title, author, chapters):
     Returns:
         str: Complete HTML document
     """
+    # Escape title and author to prevent XSS
+    safe_title = html_escape.escape(title)
+    safe_author = html_escape.escape(author)
+    
     html_template = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
-        <title>{title}</title>
+        <title>{safe_title}</title>
         <style>
             @page {{
                 size: A4;
@@ -165,8 +170,8 @@ def create_pdf_html(title, author, chapters):
         </style>
     </head>
     <body>
-        <h1>{title}</h1>
-        <p class="author">by {author}</p>
+        <h1>{safe_title}</h1>
+        <p class="author">by {safe_author}</p>
         <hr>
         {''.join(f'<div class="chapter">{chapter}</div>' for chapter in chapters)}
     </body>

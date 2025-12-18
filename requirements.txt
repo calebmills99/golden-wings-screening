@@ -1,0 +1,9 @@
+# EPUB to PDF Converter Dependencies
+ebooklib>=0.18
+lxml>=4.9.0
+weasyprint>=60.0
+
+# YouTube Upload Script Dependencies (existing)
+google-api-python-client>=2.0.0
+google-auth-httplib2>=0.1.0
+google-auth-oauthlib>=0.5.0

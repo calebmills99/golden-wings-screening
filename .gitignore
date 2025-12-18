@@ -56,3 +56,6 @@ __pycache__/
 node_modules/
 gmail_token.pickle
 token.pickle
+venv/
+env/
+*.egg-info/

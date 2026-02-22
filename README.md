@@ -11,7 +11,7 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 - **Date**: October 26, 2025
 - **Time**: 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
 - **Duration**: 90 minutes
-- **Admin Email**: info@golden-wings-robyn.com
+- **Admin Email**: info@gwings.studio
 
 ## 🚀 What's Included
 
@@ -55,7 +55,7 @@ Full deployment time: ~40 minutes
 
 ## 📞 Support
 
-For questions or issues, contact: info@golden-wings-robyn.com
+For questions or issues, contact: info@gwings.studio
 
 ## 🎬 Ready to Launch!
 

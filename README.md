@@ -8,7 +8,7 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 
 ## 🎯 Screening Details
 
-- **Date**: October 26, 2025
+- **Date**: Free screening through the winter until springtime
 - **Time**: 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
 - **Duration**: 90 minutes
 - **Admin Email**: info@gwings.studio

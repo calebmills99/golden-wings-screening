@@ -2,6 +2,10 @@ name: golden-wings-screening
 region: nyc
 static_sites:
   - name: web
+    github:
+      repo: calebmills99/golden-wings-screening
+      branch: main
+      deploy_on_push: true
     source_dir: /
     output_dir: _site
     build_command: npm run build

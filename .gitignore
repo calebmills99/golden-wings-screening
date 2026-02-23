@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.production
+.dev.vars
 
 # API Keys and credentials
 config.json

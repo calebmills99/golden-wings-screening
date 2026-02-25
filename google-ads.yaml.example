@@ -1,0 +1,14 @@
+# google-ads.yaml — copy to google-ads.yaml and fill in values
+# This file is gitignored. Never commit google-ads.yaml.
+#
+# How to get these values:
+#   developer_token  → Google Ads UI → Tools → API Center
+#   client_id/secret → Google Cloud Console → APIs & Credentials → OAuth 2.0 Client IDs
+#   refresh_token    → run: python get_refresh_token.py
+#   login_customer_id → your Google Ads customer ID without dashes
+
+developer_token: YOUR_DEVELOPER_TOKEN
+client_id: YOUR_CLIENT_ID.apps.googleusercontent.com
+client_secret: YOUR_CLIENT_SECRET
+refresh_token: YOUR_REFRESH_TOKEN
+login_customer_id: 8038035043

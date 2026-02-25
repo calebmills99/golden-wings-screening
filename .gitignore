@@ -8,6 +8,7 @@
 config.json
 credentials.json
 *-credentials.json
+google-ads.yaml
 
 # Google Apps Script clasp files
 .clasp.json

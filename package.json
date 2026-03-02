@@ -4,8 +4,8 @@
   "description": "Complete backend automation system for managing RSVPs for the Golden Wings documentary screening.",
   "main": "index.js",
   "scripts": {
-    "build:css": "node_modules/.bin/tailwindcss -i ./src/css/styles.css -o ./_site/css/styles.css --minify",
-    "watch:css": "node_modules/.bin/tailwindcss -i ./src/css/styles.css -o ./_site/css/styles.css --watch",
+    "build:css": "npx tailwindcss -i ./src/css/styles.css -o ./docs/css/styles.css --minify",
+    "watch:css": "npx tailwindcss -i ./src/css/styles.css -o ./docs/css/styles.css --watch",
     "build:11ty": "eleventy",
     "build": "npm run build:css && npm run build:11ty",
     "dev": "eleventy --serve",

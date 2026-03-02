@@ -3,4 +3,6 @@ main = "gwingz-worker.js"
 compatibility_date = "2026-02-22"
 
 [vars]
-# RESEND_API_KEY should be set via the dashboard or `wrangler secret put RESEND_API_KEY`
+# RESEND_API_KEY should be set via `wrangler secret put RESEND_API_KEY`
+# Once your domain is verified in Resend, set this to your sending address:
+# FROM_EMAIL = "info@gwingz.com"

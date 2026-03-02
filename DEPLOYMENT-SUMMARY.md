@@ -44,22 +44,22 @@ A simple, single-page GitHub Pages deployment for your Golden Wings documentary 
 
 ## ✅ What Works Right Now
 
-- ✅ Form submits to your existing Google Apps Script webhook
-- ✅ RSVPs saved to Google Sheets
-- ✅ Confirmation emails sent automatically
-- ✅ Calendar events created
+- ✅ Form submits to Cloudflare Worker (`gwingz-worker.js`)
+- ✅ Lead notification emails sent to admin via Resend API
+- ✅ Watch link confirmation emails sent to users via Resend API
+- ✅ Watch page analytics tracked through Worker
 - ✅ Mobile responsive design
-- ✅ Phone number auto-formatting
+- ✅ Honeypot spam protection
 - ✅ Form validation
 
 ## 🔗 Backend Connection
 
-The form is already connected to your webhook:
+The form submits to the Cloudflare Worker:
 ```
-https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec
+https://gwingz-worker.calebmills99.workers.dev
 ```
 
-This is the same webhook used in your `test-webhook.sh` script, so all your existing backend automation (emails, sheets, calendar) works immediately.
+The Worker handles form submissions (sends admin + user emails via Resend) and watch page analytics.
 
 ## 🎨 Design Inspired By
 

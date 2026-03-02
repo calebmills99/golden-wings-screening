@@ -148,12 +148,9 @@ const WEBHOOK_URL = '{{ site.webhookUrl }}';
 document.getElementById('rsvp-form').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  console.log('🚀 STEP 1: Form submitted');
-
   const feedback = document.getElementById('form-feedback');
   const submitBtn = e.target.querySelector('button[type="submit"]');
 
-  // Capture form data
   const formData = {
     name: document.getElementById('name').value,
     email: document.getElementById('email').value,
@@ -163,50 +160,35 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
     'hp-check': document.getElementById('hp-check').value
   };
 
-  console.log('📝 STEP 2: Form data captured:', formData);
-  console.log('🍯 STEP 3: Honeypot value:', formData['hp-check'], '(should be empty)');
-
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting...';
-
-  const payload = JSON.stringify(formData);
-  console.log('📦 STEP 4: JSON payload created:', payload);
-  console.log('🎯 STEP 5: Sending to webhook:', WEBHOOK_URL);
+  submitBtn.textContent = 'Sending...';
+  feedback.classList.add('hidden');
 
   try {
-    const startTime = Date.now();
-    console.log('⏱️ STEP 6: Fetch started at', new Date(startTime).toLocaleTimeString());
-
     const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: payload,
-      mode: 'no-cors'
+      body: JSON.stringify(formData)
     });
 
-    const endTime = Date.now();
-    console.log('✅ STEP 7: Fetch completed in', (endTime - startTime), 'ms');
-    console.log('📨 STEP 8: Response received (no-cors mode, can\'t read body)');
+    const result = await response.json();
 
-    feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
-    feedback.textContent = 'Success! Check your email for the watch link. You can start watching immediately!';
-    feedback.classList.remove('hidden');
-    feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    e.target.reset();
-    submitBtn.disabled = false;
-    submitBtn.textContent = '{{ site.rsvp.submitButton }}';
-
-    console.log('🎉 STEP 9: Frontend complete - Check Google Apps Script logs now!');
-
+    if (response.ok && result.success) {
+      feedback.className = 'text-center p-4 rounded-lg bg-green-100 text-green-800';
+      feedback.textContent = 'Success! Check your email for the watch link.';
+      feedback.classList.remove('hidden');
+      feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      e.target.reset();
+    } else {
+      throw new Error(result.error || 'Submission failed');
+    }
   } catch (error) {
-    console.error('❌ ERROR at fetch:', error);
     feedback.className = 'text-center p-4 rounded-lg bg-red-100 text-red-800';
     feedback.textContent = 'Something went wrong. Please try again or email {{ site.contact.email }}';
     feedback.classList.remove('hidden');
+  } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = '{{ site.rsvp.submitButton }}';
   }
 });
-
-console.log('✨ Form handler loaded and ready');
 </script>

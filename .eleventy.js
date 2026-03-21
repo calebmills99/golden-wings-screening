@@ -2,6 +2,7 @@ module.exports = function(eleventyConfig) {
   // Copy assets and videos into _site
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
   eleventyConfig.addPassthroughCopy({ "src/videos": "videos" });
+  eleventyConfig.addPassthroughCopy("src/CNAME");
     
     // 🔥 FIX: ADD THIS LINE TO COPY THE IMAGES DIRECTORY
     eleventyConfig.addPassthroughCopy({ "src/images": "images" });

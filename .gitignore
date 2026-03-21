@@ -48,6 +48,10 @@ sample-submissions.json
 # Build output
 _site/
 
+# Python virtual environment
+venv/
+__pycache__/
+
 # Dependencies
 node_modules/
 gmail_token.pickle

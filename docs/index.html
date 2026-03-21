@@ -71,14 +71,17 @@
       </p>
     
 
-    <div class="flex justify-center mt-12">
-      <img
-        src="https://imgur.com/0TQ8Vy9.png"
-        alt="Golden Wings logo"
-        class="w-40 h-auto drop-shadow-lg"
-        loading="lazy"
-      >
-    </div>
+    <div class="mt-12">
+      <div class="relative w-full" style="padding-top:56.25%;">
+        <iframe
+          id="stream-player"
+          data-src="https://customer-e46l63ee4ck01nmz.cloudflarestream.com/a4ad2ae7bcf9a68035416570b045edfa/iframe?autoplay=true&muted=true"
+          class="absolute inset-0 w-full h-full rounded-lg shadow-lg"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -163,6 +166,15 @@
 </div>
 
 <script>
+const player = document.getElementById('stream-player');
+const observer = new IntersectionObserver(function(entries) {
+  if (entries[0].isIntersecting && !player.src) {
+    player.src = player.dataset.src;
+    observer.disconnect();
+  }
+}, { threshold: 0.3 });
+observer.observe(player);
+
 const WEBHOOK_URL = 'https://gwingz-worker.calebmills99.workers.dev';
 
 document.getElementById('rsvp-form').addEventListener('submit', async function(e) {

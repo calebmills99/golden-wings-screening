@@ -17,6 +17,13 @@ export default {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
+    const url = new URL(request.url);
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    if (path === "/v1/api") {
+      return handleTailscaleWebhook(request, env);
+    }
+
     if (request.method !== "POST") {
       return jsonResponse({ success: false, error: "Method not allowed" }, 405);
     }
@@ -39,6 +46,36 @@ export default {
     }
   },
 };
+
+async function handleTailscaleWebhook(request, env) {
+  if (request.method !== "POST") {
+    return jsonResponse({ success: false, error: "Method not allowed" }, 405);
+  }
+
+  try {
+    const data = await request.json();
+    console.log("Tailscale webhook received:", JSON.stringify(data));
+
+    const notification = {
+      to: ["ceo@gwingz.studio"],
+      subject: "Tailscale Webhook Event",
+      html: `
+        <h2>Tailscale Webhook</h2>
+        <p><strong>Received:</strong> ${new Date().toISOString()}</p>
+        <pre style="background:#f3f4f6;padding:16px;border-radius:8px;overflow-x:auto;">${esc(JSON.stringify(data, null, 2))}</pre>
+      `,
+    };
+
+    try {
+      await sendEmail(env, notification);
+    } catch (_) {}
+
+    return jsonResponse({ success: true, message: "Webhook received" });
+  } catch (error) {
+    console.error("Tailscale webhook error:", error.message);
+    return jsonResponse({ success: false, error: error.message }, 400);
+  }
+}
 
 async function handleFormSubmission(data, env) {
   const adminEmail = buildAdminNotification(data);

@@ -10,10 +10,12 @@ Usage:
     python check_campaign.py --days 60   # expand lookback window
 """
 import argparse
+import os
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 
-CUSTOMER_ID = "8038035043"
+# Customer ID should be configured in google-ads.yaml or via environment variable
+CUSTOMER_ID = os.environ.get("GOOGLE_ADS_CUSTOMER_ID", "")
 
 
 def run(client, customer_id, days):
@@ -114,6 +116,12 @@ def main():
         print(f"Error loading google-ads.yaml: {e}")
         print("\nMake sure google-ads.yaml exists and is configured.")
         print("See google-ads.yaml.example for the required format.")
+        raise SystemExit(1)
+
+    if not CUSTOMER_ID:
+        print("Error: GOOGLE_ADS_CUSTOMER_ID environment variable not set.")
+        print("Set it via: export GOOGLE_ADS_CUSTOMER_ID=your_customer_id")
+        print("Or configure login_customer_id in google-ads.yaml")
         raise SystemExit(1)
 
     try:

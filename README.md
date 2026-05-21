@@ -1,6 +1,6 @@
 # Golden Wings Documentary Screening - RSVP System
 
-Complete backend automation system for managing RSVPs for the Golden Wings documentary screening.
+Cloudflare-based RSVP system for managing screening registrations for the Golden Wings documentary.
 
 ## 📽️ About Golden Wings
 
@@ -16,9 +16,9 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 ## 🚀 What's Included
 
 ### Backend System
-- **`golden-wings-backend.js`** - Google Apps Script for webhook handling
-- **`calendar-integration.js`** - Multi-platform calendar event system
-- **`webflow-form-integration.html`** - Enhanced RSVP form for Webflow
+- **`gwingz-worker.js`** - Cloudflare Worker RSVP API
+- **`wrangler.toml`** - Cloudflare Worker configuration
+- **`webflow-form-integration.html`** - Webflow-ready RSVP form posting to Worker
 - **`admin-dashboard.html`** - Admin dashboard for managing RSVPs
 
 ### Documentation
@@ -28,7 +28,7 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 ## ✨ Features
 
 - ✅ Automated confirmation emails
-- ✅ Google Sheets RSVP database
+- ✅ Cloudflare Worker RSVP endpoint
 - ✅ Calendar integration (Google, Outlook, .ics)
 - ✅ Real-time admin dashboard
 - ✅ Weekly RSVP reports
@@ -38,17 +38,16 @@ A powerful documentary following Robyn Stewart's remarkable 50+ year career as a
 
 ## 📦 Quick Start
 
-1. **Set up Google Apps Script** (see `setup-instructions.md`)
-2. **Create Google Sheets database**
-3. **Configure Webflow webhook**
-4. **Deploy admin dashboard**
+1. **Deploy Cloudflare Worker** (see `setup-instructions.md`)
+2. **Set Worker secrets (`RESEND_API_KEY`)**
+3. **Configure form/webflow webhook to `/api/rsvp`**
+4. **Deploy static site/admin dashboard**
 
 Full deployment time: ~40 minutes
 
 ## 🔧 Technology Stack
 
-- Google Apps Script (Backend)
-- Google Sheets (Database)
+- Cloudflare Workers (Backend API)
 - Google Workspace (Email)
 - Webflow (Forms)
 - JavaScript/HTML/CSS (Frontend)

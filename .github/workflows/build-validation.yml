@@ -1,0 +1,62 @@
+name: Build Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  validate-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CSS with Tailwind
+        run: npm run build:css
+
+      - name: Build site with Eleventy
+        run: npm run build:11ty
+
+      - name: Verify build output
+        run: |
+          echo "Checking for required files..."
+          test -f docs/index.html || (echo "❌ Missing index.html" && exit 1)
+          test -f docs/css/styles.css || (echo "❌ Missing styles.css" && exit 1)
+          test -d docs/images || (echo "❌ Missing images directory" && exit 1)
+          test -d docs/videos || (echo "❌ Missing videos directory" && exit 1)
+          echo "✅ All required files present"
+
+      - name: Check HTML validity (basic)
+        run: |
+          if grep -q "<!DOCTYPE html>" docs/index.html; then
+            echo "✅ Valid HTML doctype found"
+          else
+            echo "❌ Missing or invalid HTML doctype"
+            exit 1
+          fi
+
+      - name: List build output
+        run: |
+          echo "Build output structure:"
+          tree docs/ -L 2 || ls -laR docs/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: validated-build
+          path: docs/
+          retention-days: 3

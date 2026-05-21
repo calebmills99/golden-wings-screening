@@ -1,0 +1,195 @@
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  🎬 Golden Wings - GitHub Actions Quick Reference                 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+📦 CREATED FILES
+═══════════════════════════════════════════════════════════════════
+
+  .github/
+  ├── setup-deployment.sh          Interactive setup wizard
+  └── workflows/
+      ├── README.md                 Complete workflow documentation
+      ├── deploy-cloudflare-pages.yml    Cloudflare Pages deployment
+      ├── deploy-github-pages.yml        GitHub Pages deployment
+      └── build-validation.yml           PR/branch build validation
+
+  docs/
+  └── CNAME                         Custom domain (gwingz.com)
+
+  GITHUB_ACTIONS_GUIDE.md           This comprehensive guide
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 QUICK START
+═══════════════════════════════════════════════════════════════════
+
+Option 1: CLOUDFLARE PAGES (Recommended - Best Performance)
+───────────────────────────────────────────────────────────────────
+1. Add GitHub Secrets (Settings → Secrets → Actions):
+   • CLOUDFLARE_API_TOKEN (from dash.cloudflare.com → API Tokens)
+   • CLOUDFLARE_ACCOUNT_ID (from Cloudflare dashboard URL)
+
+2. Push to main:
+   $ git add .
+   $ git commit -m "Enable CI/CD"
+   $ git push origin main
+
+3. Configure domain in Cloudflare Pages dashboard
+
+Result: https://gwingz.com (global CDN, PR previews)
+
+───────────────────────────────────────────────────────────────────
+
+Option 2: GITHUB PAGES (Simpler - No Secrets)
+───────────────────────────────────────────────────────────────────
+1. Enable in Settings → Pages:
+   • Source: "GitHub Actions"
+   • Custom domain: gwingz.com (optional)
+
+2. Push to main:
+   $ git add .
+   $ git commit -m "Enable CI/CD"
+   $ git push origin main
+
+Result: https://gwingz.com or gwingz-studio.github.io/gwingz-screening
+
+───────────────────────────────────────────────────────────────────
+
+Option 3: USE SETUP WIZARD
+───────────────────────────────────────────────────────────────────
+$ ./.github/setup-deployment.sh
+
+Guides you through:
+  • Choosing deployment method
+  • Disabling unused workflows
+  • Getting required secrets
+  • Next steps
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚙️ WORKFLOW TRIGGERS
+═══════════════════════════════════════════════════════════════════
+
+Cloudflare Pages:
+  ✓ Push to main → Production deployment
+  ✓ Pull request → Preview deployment
+  ✓ Manual → Actions tab → Run workflow
+
+GitHub Pages:
+  ✓ Push to main → Production deployment
+  ✓ Manual → Actions tab → Run workflow
+
+Build Validation:
+  ✓ Pull request to main → Validate only
+  ✓ Push to other branches → Validate only
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 LOCAL TESTING
+═══════════════════════════════════════════════════════════════════
+
+Install:     $ npm install
+Build:       $ npm run build
+Dev server:  $ npm run dev
+Watch CSS:   $ npm run watch:css
+
+Test before pushing!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 MONITORING
+═══════════════════════════════════════════════════════════════════
+
+GitHub UI:
+  • Go to Actions tab
+  • Click latest workflow run
+  • View logs and artifacts
+
+Command line:
+  $ gh run list
+  $ gh run view [run-id]
+  $ gh run watch
+
+Status badge:
+  ![Status](https://github.com/Gwingz-Studio/gwingz-screening/
+  actions/workflows/deploy-cloudflare-pages.yml/badge.svg)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🐛 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+Build fails:
+  → Check Actions logs
+  → Test locally: npm run build
+  → Verify package.json scripts exist
+
+Cloudflare fails:
+  → Verify secrets are set correctly
+  → Check API token permissions
+  → Ensure account ID is correct
+
+GitHub Pages 404:
+  → Settings → Pages → Source: "GitHub Actions"
+  → Wait 5-10 minutes for deployment
+  → Check DNS configuration
+
+Site broken:
+  → Check browser console for errors
+  → Verify CSS built: docs/css/styles.css
+  → Verify images copied: docs/images/
+  → Test form submission to Worker
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 DEPLOYMENT COMPARISON
+═══════════════════════════════════════════════════════════════════
+
+                    Cloudflare Pages    GitHub Pages
+Setup:              Medium              Easy
+Performance:        Excellent ⚡⚡⚡       Good ⚡⚡
+PR Previews:        ✅ Yes              ❌ No
+Secrets Required:   ✅ Yes              ❌ No
+Custom Domain:      ✅ Yes              ✅ Yes
+Best For:           Production          Staging/Simple
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 CHECKLIST
+═══════════════════════════════════════════════════════════════════
+
+Pre-deployment:
+  [ ] Local build tested (npm run build)
+  [ ] Deployment method chosen
+  [ ] Secrets configured (if Cloudflare)
+  [ ] DNS ready (if custom domain)
+
+Deployment:
+  [ ] Workflows committed
+  [ ] Pushed to main
+  [ ] Action completed successfully
+  [ ] Site accessible
+
+Post-deployment:
+  [ ] Custom domain configured
+  [ ] SSL active
+  [ ] All pages load
+  [ ] Form works
+  [ ] Video streams
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION
+═══════════════════════════════════════════════════════════════════
+
+  .github/workflows/README.md     → Detailed workflow guide
+  GITHUB_ACTIONS_GUIDE.md         → Complete implementation guide
+  CLAUDE.md                       → Project architecture reference
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ YOU'RE ALL SET!
+
+Next: Choose deployment method, configure secrets (if needed), push!
+
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

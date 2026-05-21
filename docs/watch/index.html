@@ -103,7 +103,8 @@
 </div>
 
 <script>
-const WEBHOOK_URL = 'https://gwingz-worker.calebmills99.workers.dev';
+const WEBHOOK_URL = 'https://gwingz-worker.calebmills99.workers.dev'.replace(/\/+$/, '');
+const WATCH_ACCESS_URL = `${WEBHOOK_URL}/api/watch-access`;
 
 document.getElementById('access-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -114,7 +115,7 @@ document.getElementById('access-form').addEventListener('submit', async function
   if (honeypot) return;
 
   try {
-    fetch(WEBHOOK_URL, {
+    fetch(WATCH_ACCESS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -164,7 +164,8 @@ const observer = new IntersectionObserver(function(entries) {
 }, { threshold: 0.3 });
 observer.observe(player);
 
-const WEBHOOK_URL = 'https://gwingz-worker.calebmills99.workers.dev';
+const WEBHOOK_URL = 'https://gwingz-worker.calebmills99.workers.dev'.replace(/\/+$/, '');
+const RSVP_URL = `${WEBHOOK_URL}/api/rsvp`;
 
 document.getElementById('rsvp-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -185,7 +186,7 @@ document.getElementById('rsvp-form').addEventListener('submit', async function(e
   feedback.classList.add('hidden');
 
   try {
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(RSVP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)

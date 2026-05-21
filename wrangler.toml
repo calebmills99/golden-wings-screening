@@ -6,3 +6,8 @@ compatibility_date = "2026-02-22"
 # RESEND_API_KEY should be set via `wrangler secret put RESEND_API_KEY`
 # Once your domain is verified in Resend, set this to your sending address:
 # FROM_EMAIL = "info@gwingz.com"
+
+# Optional: store RSVP payloads in Cloudflare KV
+# [[kv_namespaces]]
+# binding = "RSVP_SUBMISSIONS"
+# id = "your-kv-namespace-id"

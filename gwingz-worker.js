@@ -1,13 +1,17 @@
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Content-Type-Options": "nosniff",
+      ...CORS_HEADERS,
+    },
   });
 }
 
@@ -20,6 +24,10 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
 
+    if (path === "/health" && request.method === "GET") {
+      return jsonResponse({ ok: true, service: "gwingz-rsvp-worker" });
+    }
+
     if (path === "/v1/api") {
       return handleTailscaleWebhook(request, env);
     }
@@ -29,23 +37,35 @@ export default {
     }
 
     try {
-      const data = await request.json();
+      const data = await parseJson(request);
 
       if (data["hp-check"] || data["hp-check-watch"]) {
         return jsonResponse({ success: true, message: "OK" });
       }
 
-      if (data.type === "watch_access") {
+      if (path === "/api/watch-access" || data.type === "watch_access") {
         return handleWatchAnalytics(data, env);
       }
 
-      return handleFormSubmission(data, env);
+      if (path === "/api/rsvp" || path === "/") {
+        return handleRSVPSubmission(data, env);
+      }
+
+      return jsonResponse({ success: false, error: "Not found" }, 404);
     } catch (error) {
       console.error("Worker error:", error.message);
-      return jsonResponse({ success: false, error: error.message }, 500);
+      return jsonResponse({ success: false, error: "Internal server error" }, 500);
     }
   },
 };
+
+async function parseJson(request) {
+  try {
+    return await request.json();
+  } catch (_) {
+    throw new Error("Invalid JSON body");
+  }
+}
 
 async function handleTailscaleWebhook(request, env) {
   if (request.method !== "POST") {
@@ -77,9 +97,14 @@ async function handleTailscaleWebhook(request, env) {
   }
 }
 
-async function handleFormSubmission(data, env) {
-  const adminEmail = buildAdminNotification(data);
-  const userEmail = buildUserConfirmation(data);
+async function handleRSVPSubmission(data, env) {
+  const payload = normalizeRSVPData(data);
+  validateRSVPPayload(payload);
+
+  await storeRSVPIfConfigured(env, payload);
+
+  const adminEmail = buildAdminNotification(payload);
+  const userEmail = buildUserConfirmation(payload);
 
   const results = await Promise.allSettled([
     sendEmail(env, adminEmail),
@@ -102,6 +127,45 @@ async function handleWatchAnalytics(data, env) {
     await sendEmail(env, email);
   } catch (_) {}
   return jsonResponse({ success: true });
+}
+
+function normalizeRSVPData(data) {
+  return {
+    name: clean(data.name, 120),
+    email: clean(data.email, 320).toLowerCase(),
+    phone: clean(data.phone, 40),
+    source: clean(data.source, 120),
+    specialRequests: clean(data.specialRequests, 1200),
+    submittedAt: new Date().toISOString(),
+  };
+}
+
+function validateRSVPPayload(payload) {
+  if (!payload.name) {
+    throw new Error("Name is required");
+  }
+
+  if (!payload.email) {
+    throw new Error("Email is required");
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(payload.email)) {
+    throw new Error("Valid email is required");
+  }
+}
+
+async function storeRSVPIfConfigured(env, payload) {
+  if (!env.RSVP_SUBMISSIONS || typeof env.RSVP_SUBMISSIONS.put !== "function") {
+    return;
+  }
+
+  const key = `rsvp:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+  await env.RSVP_SUBMISSIONS.put(key, JSON.stringify(payload));
+}
+
+function clean(value, maxLength) {
+  return String(value || "").trim().slice(0, maxLength);
 }
 
 async function sendEmail(env, emailPayload) {
@@ -128,15 +192,16 @@ async function sendEmail(env, emailPayload) {
 function buildAdminNotification(data) {
   return {
     to: ["ceo@gwingz.studio"],
-    subject: `Golden Wings - New Lead: ${data.name}`,
+    subject: `Golden Wings - New RSVP: ${data.name}`,
     html: `
-      <h1>New Lead Received</h1>
+      <h1>New RSVP Received</h1>
       <table style="border-collapse:collapse;width:100%;max-width:500px;">
         <tr><td style="padding:8px;font-weight:bold;">Name</td><td style="padding:8px;">${esc(data.name)}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Email</td><td style="padding:8px;">${esc(data.email)}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Phone</td><td style="padding:8px;">${esc(data.phone || "N/A")}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Source</td><td style="padding:8px;">${esc(data.source || "N/A")}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Notes</td><td style="padding:8px;">${esc(data.specialRequests || "None")}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Submitted</td><td style="padding:8px;">${esc(data.submittedAt || "N/A")}</td></tr>
       </table>
     `,
   };
@@ -194,5 +259,6 @@ function esc(str) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }

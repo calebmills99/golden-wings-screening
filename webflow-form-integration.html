@@ -118,13 +118,15 @@ Add this to your landing page RSVP forms
 
 <!-- Enhanced JavaScript for form handling -->
 <script>
+const WEBHOOK_URL = 'https://gwingz-worker.calebmills99.workers.dev/api/rsvp';
+
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('golden-wings-rsvp');
   const loadingState = document.getElementById('loading-state');
   const successMessage = document.getElementById('success-message');
 
   if (form) {
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
       // Show loading state
@@ -138,11 +140,18 @@ document.addEventListener('DOMContentLoaded', function() {
       // Add timestamp
       data.timestamp = new Date().toISOString();
 
-      // Submit to webhook (this will be configured in Webflow)
-      // Webflow will handle the webhook submission automatically
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
 
-      // Simulate success for demo (remove when webhook is configured)
-      setTimeout(() => {
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Submission failed');
+        }
+
         loadingState.style.display = 'none';
         successMessage.style.display = 'block';
 
@@ -158,7 +167,11 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
           window.location.href = '/confirmation';
         }, 3000);
-      }, 2000);
+      } catch (error) {
+        loadingState.style.display = 'none';
+        form.style.display = 'block';
+        alert('Unable to submit RSVP right now. Please try again.');
+      }
     });
   }
 });

@@ -6,7 +6,9 @@
 
 **Architecture:** A Vue 3 single-page app owns the public funnel, confirmation route, and screening room. The existing Cloudflare Worker remains the API and email boundary, with its public-site URL moved to Worker configuration so emailed links no longer point at GitHub Pages. Cloudflare Pages Direct Upload deploys the Vue build without a GitHub dependency.[^1][^2]
 
-**Tech stack:** Vue 3.5.40, Vue Router 4.6.4, TypeScript 7.0.2, Vite 8.1.5, Tailwind CSS 3.4.18, Vitest 4.1.10, Vue Test Utils 2.4.11, Playwright 1.61.1, Wrangler 4.111.0, and the existing Cloudflare Worker.[^5]
+**Tech stack:** Vue 3.5.40, Vue Router 4.6.4, TypeScript 6.0.2 via `"typescript": "npm:@typescript/typescript6@6.0.2"`, Vite 8.1.5, Tailwind CSS 3.4.18, Vitest 4.1.10, Vue Test Utils 2.4.11, Playwright 1.61.1, Wrangler 4.111.0, and the existing Cloudflare Worker.[^5][^6]
+
+**Vue toolchain note:** TypeScript 7.0 does not ship a programmatic API; use the TypeScript 6 compatibility alias for Vue/Volar tooling such as `vue-tsc`.[^6]
 
 ## Global constraints
 
@@ -233,7 +235,7 @@ Replace package.json:
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "node -e \"require('vue-tsc').run(require.resolve('@typescript/old/lib/tsc.js'))\" -- --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -256,7 +258,7 @@ Replace package.json:
     "jsdom": "29.1.1",
     "postcss": "8.5.19",
     "tailwindcss": "3.4.18",
-    "typescript": "7.0.2",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
     "vite": "8.1.5",
     "vitest": "4.1.10",
     "vue-tsc": "3.3.7",
@@ -3507,3 +3509,4 @@ Type consistency:
 [^3]: Canonical title, synopsis, awards, contacts, and unresolved runtime: E:\GoldenWings\presskit\FACT_SHEET.md, last updated 2026-07-03.
 [^4]: Verified source paths and presskit handling rules: E:\GoldenWings\presskit\AGENTS.md plus successful Test-Path and ImageMagick identify output on 2026-07-16.
 [^5]: Package versions checked with npm view on 2026-07-16; Vue Router is pinned to 4.6.4 because its only peer is Vue 3.5, while 5.2.0 adds unrelated Pinia peers. Local runtime was Node v26.4.0 and npm 11.17.0.
+[^6]: TypeScript 7.0 release guidance, "Running Side-by-Side with TypeScript 6.0": https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/.

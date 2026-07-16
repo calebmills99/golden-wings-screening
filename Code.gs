@@ -25,6 +25,30 @@ const CONFIG = {
  * Returns a simple status message
  */
 function doGet(e) {
+  const mode = e && e.parameter ? e.parameter.mode : null;
+
+  if (mode === 'stats') {
+    const stats = getRSVPStats();
+    const recent = getRecentRSVPs(10);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        success: true,
+        generatedAt: new Date().toISOString(),
+        stats: stats,
+        recent: recent,
+        event: {
+          date: CONFIG.screening.date,
+          timePST: CONFIG.screening.timePST,
+          timeCST: CONFIG.screening.timeCST,
+          timeEST: CONFIG.screening.timeEST,
+          venue: CONFIG.screening.venue,
+          duration: CONFIG.screening.duration
+        }
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   return ContentService
     .createTextOutput(JSON.stringify({
       status: 'active',
@@ -277,24 +301,80 @@ function createCalendarEvent(rsvpData) {
  * Get RSVP statistics for admin dashboard
  */
 function getRSVPStats() {
-  const sheet = SpreadsheetApp.openById(CONFIG.spreadsheetId).getSheetByName(CONFIG.sheetName);
-  const data = sheet.getDataRange().getValues();
-
-  // Skip header row
-  const rsvps = data.slice(1);
+  const rows = getRSVPDataRows();
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   const stats = {
-    totalRSVPs: rsvps.length,
-    totalAttendees: rsvps.length,
-    confirmedRSVPs: rsvps.filter(row => row[6] === 'confirmed').length,
-    recentRSVPs: rsvps.filter(row => {
-      const rsvpDate = new Date(row[0]);
-      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      return rsvpDate > weekAgo;
-    }).length
+    totalRSVPs: rows.length,
+    totalAttendees: rows.length,
+    confirmedRSVPs: rows.filter(row => (row[6] || '').toString().toLowerCase() === 'confirmed').length,
+    recentRSVPs: rows.filter(row => {
+      const rsvpDate = parseSpreadsheetDate(row[0]);
+      return rsvpDate && rsvpDate > weekAgo;
+    }).length,
+    daysUntilEvent: calculateDaysUntilEvent(),
+    lastRSVPAt: rows.length ? parseSpreadsheetDate(rows[rows.length - 1][0])?.toISOString() || null : null
   };
 
   return stats;
+}
+
+function getRecentRSVPs(limit) {
+  const rows = getRSVPDataRows();
+  if (rows.length === 0) {
+    return [];
+  }
+
+  return rows
+    .slice(Math.max(rows.length - limit, 0))
+    .reverse()
+    .map(row => ({
+      timestamp: parseSpreadsheetDate(row[0])?.toISOString() || null,
+      name: row[1] || '',
+      email: row[2] || '',
+      phone: row[3] || '',
+      specialRequests: row[4] || '',
+      source: row[5] || '',
+      status: row[6] || ''
+    }));
+}
+
+function getRSVPDataRows() {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const sheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+
+  if (!sheet) {
+    return [];
+  }
+
+  const values = sheet.getDataRange().getValues();
+
+  if (!values || values.length <= 1) {
+    return [];
+  }
+
+  return values.slice(1).filter(row => row.some(cell => cell !== ''));
+}
+
+function parseSpreadsheetDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Date) {
+    return value;
+  }
+
+  const parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function calculateDaysUntilEvent() {
+  const eventDate = new Date(`${CONFIG.screening.date}T12:00:00Z`);
+  const now = new Date();
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const diff = Math.ceil((eventDate - now) / millisecondsPerDay);
+  return diff >= 0 ? diff : 0;
 }
 
 /**

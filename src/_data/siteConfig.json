@@ -23,6 +23,10 @@
     "email": "info@golden-wings-robyn.com",
     "website": "https://gwingz.com"
   },
+  "admin": {
+    "analyticsEndpoint": "https://script.google.com/macros/s/AKfycbxnU3k4duWhFRaMPnUVyp7NaGxG6qPN2Py43eNwCBZz8S0DN5xcMLgUdMAMb7iQ-ewQsg/exec",
+    "deploymentDocs": "https://docs.digitalocean.com/products/app-platform/how-to/deploy/"
+  },
   "meta": {
     "lastUpdated": "2025-10-20T00:00:00Z",
     "version": "1.0.0"

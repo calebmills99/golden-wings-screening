@@ -48,6 +48,10 @@ sample-submissions.json
 # Build output
 _site/
 
+# Local agent workspaces
+.worktrees/
+.superpowers/
+
 # Python virtual environment
 venv/
 __pycache__/

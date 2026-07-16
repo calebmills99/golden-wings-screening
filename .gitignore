@@ -47,6 +47,10 @@ sample-submissions.json
 
 # Build output
 _site/
+dist/
+.wrangler/
+test-results/
+playwright-report/
 
 # Local agent workspaces
 .worktrees/

@@ -1,65 +1,49 @@
-# Golden Wings Documentary Screening - RSVP System
+# Golden Wings screening funnel
 
-Cloudflare-based RSVP system for managing screening registrations for the Golden Wings documentary.
+Vue and Cloudflare application for Golden Wings: Fifty Year Flight Path.
 
-## 📽️ About Golden Wings
+## Local development
 
-A powerful documentary following Robyn Stewart's remarkable 50+ year career as an American Airlines flight attendant, directed by her son Caleb Mills Stewart. The film captures stories of courage, dedication, and the evolution of aviation through one woman's extraordinary journey.
+~~~powershell
+npm install
+npm run dev
+~~~
 
-## 🎯 Screening Details
+The app opens at http://localhost:5173.
 
-- **Date**: Free screening through the winter until springtime
-- **Time**: 4:30 PM PST / 6:30 PM CST / 7:30 PM EST
-- **Duration**: 90 minutes
-- **Admin Email**: info@gwings.studio
+## Verification
 
-## 🚀 What's Included
+~~~powershell
+npm run test
+npm run build
+npm run e2e
+~~~
 
-### Backend System
-- **`gwingz-worker.js`** - Cloudflare Worker RSVP API
-- **`wrangler.toml`** - Cloudflare Worker configuration
-- **`webflow-form-integration.html`** - Webflow-ready RSVP form posting to Worker
-- **`admin-dashboard.html`** - Admin dashboard for managing RSVPs
+## Cloudflare deployment
 
-### Documentation
-- **`setup-instructions.md`** - Step-by-step deployment guide
-- **`deployment-checklist.md`** - Complete feature overview and deployment steps
+Deploy the Vue app through Cloudflare Pages Direct Upload:
 
-## ✨ Features
+~~~powershell
+npm run deploy:pages
+~~~
 
-- ✅ Automated confirmation emails
-- ✅ Cloudflare Worker RSVP endpoint
-- ✅ Calendar integration (Google, Outlook, .ics)
-- ✅ Real-time admin dashboard
-- ✅ Weekly RSVP reports
-- ✅ Export capabilities (CSV, PDF)
-- ✅ Mobile-responsive design
-- ✅ Special accommodations tracking
+Deploy the RSVP and watch-access Worker:
 
-## 📦 Quick Start
+~~~powershell
+npm run deploy:worker
+~~~
 
-1. **Deploy Cloudflare Worker** (see `setup-instructions.md`)
-2. **Set Worker secrets (`RESEND_API_KEY`)**
-3. **Configure form/webflow webhook to `/api/rsvp`**
-4. **Deploy static site/admin dashboard**
+Worker behavior uses these Cloudflare values:
 
-Full deployment time: ~40 minutes
+- RESEND_API_KEY as a secret
+- FROM_EMAIL as an optional sender address
+- PUBLIC_SITE_URL as the public site origin
+- RSVP_SUBMISSIONS as an optional KV binding
 
-## 🔧 Technology Stack
+See docs/deployment-cloudflare.md for the full runbook.
 
-- Cloudflare Workers (Backend API)
-- Google Workspace (Email)
-- Webflow (Forms)
-- JavaScript/HTML/CSS (Frontend)
+## Routes
 
-## 📞 Support
-
-For questions or issues, contact: info@gwings.studio
-
-## 🎬 Ready to Launch!
-
-This system provides a complete, professional RSVP management solution for your documentary screening.
-
----
-
-*Generated with Claude Code*
+- / is the public film funnel.
+- /confirmation confirms that the watch link is being sent.
+- /watch opens the email-gated screening room.

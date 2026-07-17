@@ -9,8 +9,10 @@ import { filmOffer } from '../content/filmOffer'
 
 const router = useRouter()
 
-function continueToConfirmation() {
-  void router.push({ name: 'confirmation' })
+async function continueToConfirmation() {
+  await router.push({ name: 'confirmation' })
+  document.documentElement.scrollTop = 0
+  document.body.scrollTop = 0
 }
 </script>
 

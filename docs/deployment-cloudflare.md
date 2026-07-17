@@ -50,6 +50,16 @@ Reserve the future purchase or download destination without exposing it in phase
 VITE_FUTURE_OFFER_URL=
 ~~~
 
+Add the private film player URL when the screening is ready:
+
+~~~dotenv
+VITE_SCREENING_EMBED_URL=
+~~~
+
+Vite reads this value when the frontend is built. Leave it blank for the
+pre-launch screening state, or set it before `npm run build` to render the film
+player after the email gate.
+
 ## Worker configuration
 
 Set the Resend secret:

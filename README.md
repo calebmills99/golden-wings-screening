@@ -47,3 +47,9 @@ See docs/deployment-cloudflare.md for the full runbook.
 - / is the public film funnel.
 - /confirmation confirms that the watch link is being sent.
 - /watch opens the email-gated screening room.
+
+## Screening source
+
+Set `VITE_SCREENING_EMBED_URL` before building to load the private film player.
+When it is blank, the gated route shows the intentional pre-launch screening
+state and keeps the RSVP funnel available.

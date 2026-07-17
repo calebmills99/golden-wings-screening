@@ -1,6 +1,26 @@
 import { expect, test } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
+  await page.route('https://screening.example/embed', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body: `<!doctype html>
+        <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { margin: 0; display: grid; min-height: 100vh; place-items: center; background: #101114; color: #f4f5f2; font-family: Georgia, serif; }
+              main { text-align: center; }
+              p { color: #e3b341; font-family: Arial, sans-serif; text-transform: uppercase; }
+              h1 { margin: 0; font-size: clamp(2rem, 8vw, 5rem); font-weight: 400; }
+            </style>
+          </head>
+          <body><main><p>Private screening</p><h1>Golden Wings</h1></main></body>
+        </html>`
+    })
+  })
+
   await page.route('**/api/rsvp', async (route) => {
     await route.fulfill({
       status: 200,
@@ -98,6 +118,11 @@ test('watch gate opens the screening room', async ({ page }, testInfo) => {
   ).toBeVisible()
   const screeningFrame = page.getByTitle('Golden Wings documentary')
   await expect(screeningFrame).toBeVisible()
+  await expect(
+    page
+      .frameLocator('iframe[title="Golden Wings documentary"]')
+      .getByRole('heading', { name: 'Golden Wings' })
+  ).toBeVisible()
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
   const skipLinkBottom = await page
     .getByRole('link', { name: 'Skip to film' })

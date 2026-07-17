@@ -104,7 +104,7 @@ async function handleRSVPSubmission(data, env) {
   await storeRSVPIfConfigured(env, payload);
 
   const adminEmail = buildAdminNotification(payload);
-  const userEmail = buildUserConfirmation(payload);
+  const userEmail = buildUserConfirmation(payload, env);
 
   const results = await Promise.allSettled([
     sendEmail(env, adminEmail),
@@ -207,8 +207,11 @@ function buildAdminNotification(data) {
   };
 }
 
-function buildUserConfirmation(data) {
-  const watchUrl = "https://calebmills99.github.io/golden-wings-screening/watch/";
+function buildUserConfirmation(data, env) {
+  const publicSiteUrl = String(
+    env.PUBLIC_SITE_URL || "https://golden-wings-robyn.com"
+  ).replace(/\/+$/, "");
+  const watchUrl = publicSiteUrl + "/watch";
 
   return {
     to: [data.email],

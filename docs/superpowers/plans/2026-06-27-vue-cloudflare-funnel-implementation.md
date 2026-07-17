@@ -235,7 +235,7 @@ Replace package.json:
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "node -e \"require('vue-tsc').run(require.resolve('@typescript/old/lib/tsc.js'))\" -- --noEmit && vite build",
+    "build": "node -e \"process.argv.splice(1,0,'vue-tsc'); require('vue-tsc').run(require.resolve('@typescript/old/lib/tsc.js'))\" -- --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

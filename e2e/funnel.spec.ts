@@ -147,6 +147,39 @@ test('watch gate opens the screening room', async ({ page }, testInfo) => {
   })
 })
 
+test('blank screening source opens the prepared room', async ({
+  page
+}, testInfo) => {
+  await page.goto('http://127.0.0.1:4174/watch')
+
+  await page.locator('#viewer-email').fill('viewer@example.com')
+  await page.getByRole('button', { name: 'Open the screening room' }).click()
+
+  const pendingState = page.getByRole('status')
+  await expect(pendingState).toContainText(
+    'The screening room is being prepared.'
+  )
+  await expect(page.getByTitle('Golden Wings documentary')).toHaveCount(0)
+  await expect
+    .poll(() =>
+      pendingState
+        .locator('img')
+        .evaluate((element: HTMLImageElement) => element.naturalWidth)
+    )
+    .toBeGreaterThan(0)
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+
+  const hasHorizontalOverflow = await page.evaluate(() => {
+    return document.documentElement.scrollWidth > window.innerWidth
+  })
+  expect(hasHorizontalOverflow).toBe(false)
+
+  await page.screenshot({
+    path: testInfo.outputPath('screening-room-pending.png'),
+    fullPage: true
+  })
+})
+
 test('public routes do not overflow the viewport', async ({ page }) => {
   for (const path of ['/', '/confirmation', '/watch']) {
     await page.goto(path)

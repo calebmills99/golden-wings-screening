@@ -1025,7 +1025,7 @@ export const filmOffer = {
     heading: 'Access your screening',
     body: 'Enter your email and the screening room will open.',
     submitLabel: 'Open the screening room',
-    embedUrl: 'https://www.youtube.com/embed/RzkdMRHRblU'
+    embedUrl: import.meta.env.VITE_SCREENING_EMBED_URL || ''
   },
   confirmation: {
     eyebrow: 'Access confirmed',

@@ -16,6 +16,13 @@ Create the Pages project before the first direct upload:
 npx wrangler pages project create golden-wings-screening
 ~~~
 
+Choose the public origin that will serve the Vue build before deploying the
+Worker. Either use `https://golden-wings-screening.pages.dev`, or attach
+`golden-wings-robyn.com` to this Pages project in Cloudflare's Custom domains
+panel using the [Pages custom-domain workflow](https://developers.cloudflare.com/pages/configuration/custom-domains/).
+Set `PUBLIC_SITE_URL` in `wrangler.toml` to that exact origin so emailed watch
+links and the deployed app stay together.
+
 Deploy the built `dist` directory to the `golden-wings-screening` Pages project:
 
 ~~~powershell
@@ -68,7 +75,9 @@ Set the Resend secret:
 npx wrangler secret put RESEND_API_KEY
 ~~~
 
-The checked-in wrangler.toml sets PUBLIC_SITE_URL. Update that value when the production domain changes.
+The checked-in `wrangler.toml` uses `https://golden-wings-robyn.com`. Keep it
+only when that domain is attached to this Pages project; otherwise replace it
+with the project's `pages.dev` origin before deploying the Worker.
 
 Deploy:
 
@@ -95,6 +104,8 @@ Expected JSON:
 
 1. Run npm run verify.
 2. Run npm run e2e.
-3. Deploy the Worker if its code or configuration changed.
-4. Run `npx wrangler pages deploy dist --project-name golden-wings-screening`.
-5. Open /, /confirmation, and /watch on the Pages domain.
+3. Run `npx wrangler pages deploy dist --project-name golden-wings-screening`.
+4. Attach the chosen custom domain, if used, and open `/watch` on that origin.
+5. Make `PUBLIC_SITE_URL` match the verified origin exactly.
+6. Deploy the Worker if its code or configuration changed.
+7. Submit one RSVP and open the emailed `/watch` link.

@@ -23,7 +23,11 @@ describe('WatchGate', () => {
   })
 
   it('logs access and opens immediately for a valid email', async () => {
-    const logWatchAccess = vi.fn(async () => undefined)
+    let resolveLogWatchAccess!: () => void
+    const pendingLog = new Promise<void>((resolve) => {
+      resolveLogWatchAccess = resolve
+    })
+    const logWatchAccess = vi.fn(() => pendingLog)
     const wrapper = mount(WatchGate, {
       props: { api: { logWatchAccess } }
     })
@@ -37,6 +41,9 @@ describe('WatchGate', () => {
       honeypot: ''
     })
     expect(wrapper.emitted('unlocked')).toHaveLength(1)
+
+    resolveLogWatchAccess()
+    await pendingLog
   })
 
   it('opens even when analytics cannot be recorded', async () => {

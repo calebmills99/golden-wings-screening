@@ -10,13 +10,23 @@ Authenticate Wrangler:
 npx wrangler login
 ~~~
 
-Create the Pages project during the first direct upload:
+Create the Pages project before the first direct upload:
+
+~~~powershell
+npx wrangler pages project create golden-wings-screening
+~~~
+
+Deploy the built `dist` directory to the `golden-wings-screening` Pages project:
+
+~~~powershell
+npx wrangler pages deploy dist --project-name golden-wings-screening
+~~~
+
+For repeat deploys, the repository shorthand runs the build and the same Pages command:
 
 ~~~powershell
 npm run deploy:pages
 ~~~
-
-Wrangler deploys the dist directory to the golden-wings-screening Pages project.
 
 ## Frontend environment
 
@@ -76,5 +86,5 @@ Expected JSON:
 1. Run npm run verify.
 2. Run npm run e2e.
 3. Deploy the Worker if its code or configuration changed.
-4. Run npm run deploy:pages.
+4. Run `npx wrangler pages deploy dist --project-name golden-wings-screening`.
 5. Open /, /confirmation, and /watch on the Pages domain.

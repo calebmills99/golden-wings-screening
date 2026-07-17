@@ -3081,7 +3081,7 @@ git commit -m "feat: add private screening flow"
 - Create: .env.example
 - Modify: README.md
 - Create: docs/deployment-cloudflare.md
-- Delete: eleventy.config.js
+- Delete: .eleventy.js
 - Delete: src/index.njk
 - Delete: src/index.njk.bk
 - Delete: src/watch.njk
@@ -3277,7 +3277,7 @@ Expected: verification passes, Wrangler prints Pages deploy help, and the final 
 
 ~~~powershell
 git add .env.example README.md docs/deployment-cloudflare.md
-git add -u eleventy.config.js src
+git add -u .eleventy.js src
 git commit -m "docs: switch to Cloudflare direct deployment"
 ~~~
 

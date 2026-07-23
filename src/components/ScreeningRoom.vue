@@ -1,15 +1,40 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Clock3, Mail } from 'lucide-vue-next'
-import { filmOffer } from '../content/filmOffer'
+import { filmOffer, type ScreeningState } from '../content/filmOffer'
 
 const props = defineProps<{
   embedUrl?: string
+  screeningState?: ScreeningState
+  statusMessage?: string
 }>()
 
-const screeningUrl = computed(
-  () => props.embedUrl ?? filmOffer.watch.embedUrl
-)
+const screeningUrl = computed(() => props.embedUrl ?? '')
+const roomState = computed<ScreeningState>(() => {
+  if (screeningUrl.value) {
+    return 'open'
+  }
+  return props.screeningState || filmOffer.screeningState
+})
+
+const pendingCopy = computed(() => {
+  if (roomState.value === 'scheduled') {
+    return {
+      heading: filmOffer.watch.scheduledHeading,
+      body: props.statusMessage || filmOffer.watch.scheduledBody
+    }
+  }
+  if (roomState.value === 'closed') {
+    return {
+      heading: filmOffer.watch.closedHeading,
+      body: props.statusMessage || filmOffer.watch.closedBody
+    }
+  }
+  return {
+    heading: filmOffer.watch.pendingHeading,
+    body: props.statusMessage || filmOffer.watch.pendingBody
+  }
+})
 </script>
 
 <template>
@@ -42,8 +67,8 @@ const screeningUrl = computed(
         <img :src="filmOffer.assets.hero" alt="" aria-hidden="true" />
         <div class="screening-pending-copy">
           <Clock3 :size="24" aria-hidden="true" />
-          <h2>{{ filmOffer.watch.pendingHeading }}</h2>
-          <p>{{ filmOffer.watch.pendingBody }}</p>
+          <h2>{{ pendingCopy.heading }}</h2>
+          <p>{{ pendingCopy.body }}</p>
         </div>
       </div>
     </div>

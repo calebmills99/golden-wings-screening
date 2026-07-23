@@ -4,9 +4,12 @@ import WatchGate from './WatchGate.vue'
 
 describe('WatchGate', () => {
   it('requires a valid email', async () => {
-    const logWatchAccess = vi.fn(async () => undefined)
+    const requestWatchToken = vi.fn(async () => ({
+      embedUrl: '',
+      screeningState: 'open' as const
+    }))
     const wrapper = mount(WatchGate, {
-      props: { api: { logWatchAccess } }
+      props: { api: { requestWatchToken } }
     })
 
     await wrapper.get('form').trigger('submit')
@@ -19,44 +22,48 @@ describe('WatchGate', () => {
     expect(wrapper.get('[role="status"]').text()).toBe(
       'Enter a valid email address.'
     )
-    expect(logWatchAccess).not.toHaveBeenCalled()
+    expect(requestWatchToken).not.toHaveBeenCalled()
   })
 
-  it('logs access and opens immediately for a valid email', async () => {
-    let resolveLogWatchAccess!: () => void
-    const pendingLog = new Promise<void>((resolve) => {
-      resolveLogWatchAccess = resolve
-    })
-    const logWatchAccess = vi.fn(() => pendingLog)
+  it('requests a watch token and unlocks for a valid email', async () => {
+    const requestWatchToken = vi.fn(async () => ({
+      embedUrl: 'https://screening.example/embed',
+      screeningState: 'open' as const
+    }))
     const wrapper = mount(WatchGate, {
-      props: { api: { logWatchAccess } }
+      props: { api: { requestWatchToken } }
     })
 
     await wrapper.get('#viewer-email').setValue(' VIEWER@example.com ')
     await wrapper.get('form').trigger('submit')
+    await Promise.resolve()
 
-    expect(logWatchAccess).toHaveBeenCalledWith({
+    expect(requestWatchToken).toHaveBeenCalledWith({
       email: 'viewer@example.com',
-      page: 'watch',
-      honeypot: ''
+      honeypot: '',
+      source: 'watch-gate'
     })
-    expect(wrapper.emitted('unlocked')).toHaveLength(1)
-
-    resolveLogWatchAccess()
-    await pendingLog
+    expect(wrapper.emitted('unlocked')?.[0]?.[0]).toEqual({
+      embedUrl: 'https://screening.example/embed',
+      screeningState: 'open'
+    })
   })
 
-  it('opens even when analytics cannot be recorded', async () => {
-    const logWatchAccess = vi.fn(async () => {
+  it('shows an error when the token request fails', async () => {
+    const requestWatchToken = vi.fn(async () => {
       throw new Error('offline')
     })
     const wrapper = mount(WatchGate, {
-      props: { api: { logWatchAccess } }
+      props: { api: { requestWatchToken } }
     })
 
     await wrapper.get('#viewer-email').setValue('viewer@example.com')
     await wrapper.get('form').trigger('submit')
+    await Promise.resolve()
 
-    expect(wrapper.emitted('unlocked')).toHaveLength(1)
+    expect(wrapper.emitted('unlocked')).toBeUndefined()
+    expect(wrapper.get('[role="status"]').text()).toContain(
+      'The screening room could not be opened.'
+    )
   })
 })

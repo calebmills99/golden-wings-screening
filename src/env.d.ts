@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_AUTH0_AUDIENCE?: string
   readonly VITE_FUTURE_OFFER_URL?: string
   readonly VITE_SCREENING_EMBED_URL?: string
+  readonly VITE_SCREENING_STATE?: string
 }
 
 interface ImportMeta {

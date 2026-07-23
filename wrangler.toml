@@ -1,15 +1,23 @@
-name = "gwingz-worker"
+﻿name = "gwingz-worker"
 main = "gwingz-worker.js"
 compatibility_date = "2026-02-22"
 
 [vars]
-# This must be the Pages origin that serves the current Vue build.
-PUBLIC_SITE_URL = "https://golden-wings-robyn.com"
+PUBLIC_SITE_URL = "https://gwingz.com"
+# open | scheduled | closed — change without rebuilding the Vue app
+SCREENING_STATE = "open"
+STREAM_CUSTOMER_CODE = "e46l63ee4ck01nmz"
+# Silicon Beach Layover Edition — signed playback only via /watch (requireSignedURLs)
+STREAM_VIDEO_UID = "800f3d6841aa40d7727886dc211e34eb"
+# No SCREENING_EMBED_URL — never expose a public UID iframe for this cut
 # RESEND_API_KEY should be set via `wrangler secret put RESEND_API_KEY`
-# Once your domain is verified in Resend, set this to your sending address:
-# FROM_EMAIL = "info@gwingz.com"
+# FROM_EMAIL = "info@golden-wings-robyn.com"
 
-# Optional: store RSVP payloads in Cloudflare KV
-# [[kv_namespaces]]
-# binding = "RSVP_SUBMISSIONS"
-# id = "your-kv-namespace-id"
+[stream]
+binding = "STREAM"
+
+[[d1_databases]]
+binding = "AUDIENCE_DB"
+database_name = "golden-wings-audience"
+database_id = "71c3d1ae-169e-464e-89ed-6f240d6e5f53"
+migrations_dir = "migrations"

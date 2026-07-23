@@ -14,7 +14,9 @@
     "e2e": "playwright test",
     "verify": "npm run test && npm run build",
     "deploy:pages": "npm run build && wrangler pages deploy dist --project-name golden-wings-screening",
-    "deploy:worker": "wrangler deploy"
+    "deploy:frontend": "npm run build && node -e \"require('fs').rmSync('dist/_redirects',{force:true})\" && wrangler deploy -c wrangler.frontend.toml",
+    "deploy:worker": "wrangler deploy",
+    "deploy:staging": "npm run deploy:worker && npm run deploy:frontend"
   },
   "dependencies": {
     "lucide-vue-next": "1.0.0",

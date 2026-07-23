@@ -5,29 +5,33 @@ import { filmOffer } from '../content/filmOffer'
 import { validateEmail } from '../domain/leadValidation'
 import {
   cloudflareApi,
-  type CloudflareApiClient
+  type CloudflareApiClient,
+  type WatchTokenResult
 } from '../services/cloudflareApi'
 
 const props = withDefaults(
   defineProps<{
-    api?: Pick<CloudflareApiClient, 'logWatchAccess'>
+    api?: Pick<CloudflareApiClient, 'requestWatchToken'>
+    initialEmail?: string
   }>(),
   {
-    api: () => cloudflareApi
+    api: () => cloudflareApi,
+    initialEmail: ''
   }
 )
 
 const emit = defineEmits<{
-  unlocked: []
+  unlocked: [WatchTokenResult]
 }>()
 
 const form = reactive({
-  email: '',
+  email: props.initialEmail,
   honeypot: ''
 })
 const message = ref('')
+const loading = ref(false)
 
-function submit() {
+async function submit() {
   if (!form.email.trim()) {
     message.value = 'Enter your email address.'
     return
@@ -42,16 +46,32 @@ function submit() {
     return
   }
 
-  void props.api
-    .logWatchAccess({
-      email: form.email.trim().toLowerCase(),
-      page: 'watch',
-      honeypot: form.honeypot
-    })
-    .catch(() => undefined)
+  loading.value = true
+  message.value = ''
 
-  emit('unlocked')
+  try {
+    const result = await props.api.requestWatchToken({
+      email: form.email.trim().toLowerCase(),
+      honeypot: form.honeypot,
+      source: 'watch-gate'
+    })
+    emit('unlocked', result)
+  } catch {
+    message.value =
+      'The screening room could not be opened. Try again or email ' +
+      filmOffer.contactEmail +
+      '.'
+  } finally {
+    loading.value = false
+  }
 }
+
+defineExpose({
+  submitWithEmail(email: string) {
+    form.email = email
+    return submit()
+  }
+})
 </script>
 
 <template>
@@ -82,7 +102,13 @@ function submit() {
       />
     </div>
 
-    <button type="submit">{{ filmOffer.watch.submitLabel }}</button>
+    <button type="submit" :disabled="loading">
+      {{
+        loading
+          ? filmOffer.watch.loadingLabel
+          : filmOffer.watch.submitLabel
+      }}
+    </button>
     <p v-if="message" role="status">{{ message }}</p>
   </form>
 </template>

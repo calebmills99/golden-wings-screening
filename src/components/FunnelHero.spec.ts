@@ -3,16 +3,15 @@ import { describe, expect, it } from 'vitest'
 import FunnelHero from './FunnelHero.vue'
 
 describe('FunnelHero', () => {
-  it('puts the film and primary offer in the first section', () => {
+  it('boards the Midnight Rocket from the first section', () => {
     const wrapper = mount(FunnelHero)
 
     expect(wrapper.get('h1').text()).toBe('Golden Wings')
-    expect(wrapper.text()).toContain('Fifty Year Flight Path')
+    expect(wrapper.text()).toContain('Find Your Wings')
     expect(wrapper.get('a[href="#offer"]').text()).toContain(
-      'Send me the watch link'
+      'Board the Midnight Rocket'
     )
-    expect(wrapper.get('img.hero-portrait').attributes('alt')).toContain(
-      'Robyn Stewart'
-    )
+    expect(wrapper.get('video').attributes('src')).toContain('clouds-aerial')
+    expect(wrapper.findAll('.gw-laurel')).toHaveLength(4)
   })
 })

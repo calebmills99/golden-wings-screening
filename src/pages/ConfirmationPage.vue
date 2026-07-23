@@ -1,7 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { ArrowRight, MailCheck } from 'lucide-vue-next'
 import SiteLayout from '../components/SiteLayout.vue'
 import { filmOffer } from '../content/filmOffer'
+
+const watchTarget = computed(() => {
+  const email = String(sessionStorage.getItem('gw-watch-email') || '').trim()
+  return email
+    ? { name: 'watch' as const, query: { email } }
+    : { name: 'watch' as const }
+})
 </script>
 
 <template>
@@ -13,7 +21,7 @@ import { filmOffer } from '../content/filmOffer'
         <h1>{{ filmOffer.confirmation.heading }}</h1>
         <p>{{ filmOffer.confirmation.body }}</p>
         <div class="confirmation-actions">
-          <RouterLink class="confirmation-primary" to="/watch">
+          <RouterLink class="confirmation-primary" :to="watchTarget">
             <span>Open the screening room</span>
             <ArrowRight :size="18" aria-hidden="true" />
           </RouterLink>

@@ -1,0 +1,14 @@
+name = "golden-wings-screening"
+main = "frontend-worker.js"
+compatibility_date = "2026-02-22"
+workers_dev = true
+
+# Custom hostnames are attached via the Workers domains API:
+# - https://watch.gwingz.com
+# - https://screening.getbooked.studio
+# SPA shell used because this account token cannot create Pages projects.
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"

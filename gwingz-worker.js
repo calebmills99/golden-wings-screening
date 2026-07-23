@@ -15,6 +15,14 @@ function jsonResponse(body, status = 200) {
   });
 }
 
+function normalizeScreeningState(value) {
+  const state = String(value || "open").toLowerCase();
+  if (state === "scheduled" || state === "closed") {
+    return state;
+  }
+  return "open";
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
@@ -25,7 +33,11 @@ export default {
     const path = url.pathname.replace(/\/+$/, "") || "/";
 
     if (path === "/health" && request.method === "GET") {
-      return jsonResponse({ ok: true, service: "gwingz-rsvp-worker" });
+      return jsonResponse({
+        ok: true,
+        service: "gwingz-rsvp-worker",
+        screeningState: normalizeScreeningState(env.SCREENING_STATE),
+      });
     }
 
     if (path === "/v1/api") {
@@ -43,6 +55,10 @@ export default {
         return jsonResponse({ success: true, message: "OK" });
       }
 
+      if (path === "/api/watch-token") {
+        return handleWatchToken(data, env);
+      }
+
       if (path === "/api/watch-access" || data.type === "watch_access") {
         return handleWatchAnalytics(data, env);
       }
@@ -54,7 +70,10 @@ export default {
       return jsonResponse({ success: false, error: "Not found" }, 404);
     } catch (error) {
       console.error("Worker error:", error.message);
-      return jsonResponse({ success: false, error: "Internal server error" }, 500);
+      return jsonResponse(
+        { success: false, error: error.message || "Internal server error" },
+        error.status || 500
+      );
     }
   },
 };
@@ -63,7 +82,9 @@ async function parseJson(request) {
   try {
     return await request.json();
   } catch (_) {
-    throw new Error("Invalid JSON body");
+    const error = new Error("Invalid JSON body");
+    error.status = 400;
+    throw error;
   }
 }
 
@@ -101,6 +122,7 @@ async function handleRSVPSubmission(data, env) {
   const payload = normalizeRSVPData(data);
   validateRSVPPayload(payload);
 
+  await upsertLead(env, payload);
   await storeRSVPIfConfigured(env, payload);
 
   const adminEmail = buildAdminNotification(payload);
@@ -113,18 +135,92 @@ async function handleRSVPSubmission(data, env) {
 
   const adminResult = results[0];
   const userResult = results[1];
+  const emailDelivered =
+    adminResult.status === "fulfilled" || userResult.status === "fulfilled";
 
-  if (adminResult.status === "rejected" && userResult.status === "rejected") {
-    throw new Error("Failed to send emails");
+  if (!emailDelivered) {
+    console.error(
+      "RSVP emails unavailable:",
+      adminResult.reason?.message || userResult.reason?.message || "unknown"
+    );
   }
 
-  return jsonResponse({ success: true });
+  const publicSiteUrl = String(
+    env.PUBLIC_SITE_URL || "https://golden-wings-robyn.com"
+  ).replace(/\/+$/, "");
+
+  return jsonResponse({
+    success: true,
+    screeningState: normalizeScreeningState(env.SCREENING_STATE),
+    emailDelivered,
+    watchUrl:
+      publicSiteUrl + "/watch?email=" + encodeURIComponent(payload.email),
+  });
+}
+
+async function handleWatchToken(data, env) {
+  const email = clean(data.email, 320).toLowerCase();
+  validateEmail(email);
+
+  const screeningState = normalizeScreeningState(env.SCREENING_STATE);
+  const timestamp = new Date().toISOString();
+
+  await upsertLead(env, {
+    name: clean(data.name, 120),
+    email,
+    phone: "",
+    source: clean(data.source, 120) || "watch-gate",
+    submittedAt: timestamp,
+  });
+  await logWatchEvent(env, email, "watch", timestamp);
+
+  if (screeningState !== "open") {
+    return jsonResponse({
+      success: true,
+      screeningState,
+      embedUrl: "",
+      message:
+        screeningState === "scheduled"
+          ? "The next screening is being prepared."
+          : "This screening is closed.",
+    });
+  }
+
+  const embedUrl = await resolveScreeningEmbedUrl(env);
+  if (!embedUrl) {
+    return jsonResponse({
+      success: true,
+      screeningState: "closed",
+      embedUrl: "",
+      message: "The screening room is being prepared.",
+    });
+  }
+
+  try {
+    await sendEmail(env, buildWatchNotification({ email, timestamp, page: "watch" }));
+  } catch (_) {}
+
+  return jsonResponse({
+    success: true,
+    screeningState: "open",
+    embedUrl,
+  });
 }
 
 async function handleWatchAnalytics(data, env) {
-  const email = buildWatchNotification(data);
+  const email = clean(data.email, 320).toLowerCase();
+  if (email) {
+    await logWatchEvent(
+      env,
+      email,
+      clean(data.page, 40) || "watch",
+      clean(data.timestamp, 64) || new Date().toISOString()
+    );
+  }
+
+  const notification = buildWatchNotification(data);
   try {
-    await sendEmail(env, email);
+    await sendEmail(env, notification);
   } catch (_) {}
   return jsonResponse({ success: true });
 }
@@ -137,22 +233,112 @@ function normalizeRSVPData(data) {
     source: clean(data.source, 120),
     specialRequests: clean(data.specialRequests, 1200),
     submittedAt: new Date().toISOString(),
+    emailOptIn: data.emailOptIn === false || data.email_opt_in === false ? 0 : 1,
+    smsOptIn: data.smsOptIn || data.sms_opt_in ? 1 : 0,
   };
 }
 
 function validateRSVPPayload(payload) {
   if (!payload.name) {
-    throw new Error("Name is required");
+    const error = new Error("Name is required");
+    error.status = 400;
+    throw error;
   }
+  validateEmail(payload.email);
+}
 
-  if (!payload.email) {
-    throw new Error("Email is required");
+function validateEmail(email) {
+  if (!email) {
+    const error = new Error("Email is required");
+    error.status = 400;
+    throw error;
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(payload.email)) {
-    throw new Error("Valid email is required");
+  if (!emailPattern.test(email)) {
+    const error = new Error("Valid email is required");
+    error.status = 400;
+    throw error;
   }
+}
+
+async function upsertLead(env, payload) {
+  if (!env.AUDIENCE_DB || typeof env.AUDIENCE_DB.prepare !== "function") {
+    return;
+  }
+
+  const now = payload.submittedAt || new Date().toISOString();
+  const emailOptIn = payload.emailOptIn === 0 ? 0 : 1;
+  const smsOptIn = payload.smsOptIn ? 1 : 0;
+
+  try {
+    await env.AUDIENCE_DB.prepare(
+      `INSERT INTO leads (email, name, phone, source, email_opt_in, sms_opt_in, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(email) DO UPDATE SET
+         name = CASE WHEN excluded.name != '' THEN excluded.name ELSE leads.name END,
+         phone = CASE WHEN excluded.phone != '' THEN excluded.phone ELSE leads.phone END,
+         source = CASE WHEN excluded.source != '' THEN excluded.source ELSE leads.source END,
+         email_opt_in = CASE WHEN excluded.email_opt_in = 1 THEN 1 ELSE leads.email_opt_in END,
+         sms_opt_in = CASE WHEN excluded.sms_opt_in = 1 THEN 1 ELSE leads.sms_opt_in END,
+         updated_at = excluded.updated_at`
+    )
+      .bind(
+        payload.email,
+        payload.name || "",
+        payload.phone || "",
+        payload.source || "",
+        emailOptIn,
+        smsOptIn,
+        now,
+        now
+      )
+      .run();
+    return;
+  } catch (error) {
+    // Schema may not have opt-in columns yet — fall back and stamp consent into source.
+    console.error("Lead upsert with opt-in columns failed:", error?.message || error);
+  }
+
+  const sourceWithConsent = [
+    payload.source || "",
+    emailOptIn ? "email_opt_in=1" : "email_opt_in=0",
+    smsOptIn ? "sms_opt_in=1" : "sms_opt_in=0",
+  ]
+    .filter(Boolean)
+    .join(" | ")
+    .slice(0, 120);
+
+  await env.AUDIENCE_DB.prepare(
+    `INSERT INTO leads (email, name, phone, source, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?)
+     ON CONFLICT(email) DO UPDATE SET
+       name = CASE WHEN excluded.name != '' THEN excluded.name ELSE leads.name END,
+       phone = CASE WHEN excluded.phone != '' THEN excluded.phone ELSE leads.phone END,
+       source = CASE WHEN excluded.source != '' THEN excluded.source ELSE leads.source END,
+       updated_at = excluded.updated_at`
+  )
+    .bind(
+      payload.email,
+      payload.name || "",
+      payload.phone || "",
+      sourceWithConsent,
+      now,
+      now
+    )
+    .run();
+}
+
+async function logWatchEvent(env, email, page, createdAt) {
+  if (!env.AUDIENCE_DB || typeof env.AUDIENCE_DB.prepare !== "function") {
+    return;
+  }
+
+  await env.AUDIENCE_DB.prepare(
+    `INSERT INTO watch_events (email, page, created_at) VALUES (?, ?, ?)`
+  )
+    .bind(email, page, createdAt)
+    .run();
 }
 
 async function storeRSVPIfConfigured(env, payload) {
@@ -164,11 +350,39 @@ async function storeRSVPIfConfigured(env, payload) {
   await env.RSVP_SUBMISSIONS.put(key, JSON.stringify(payload));
 }
 
+async function resolveScreeningEmbedUrl(env) {
+  const customerCode = clean(env.STREAM_CUSTOMER_CODE, 120);
+  const videoUid = clean(env.STREAM_VIDEO_UID, 120);
+
+  // Private cut: signed playback only. Never return a public UID iframe.
+  if (
+    !env.STREAM ||
+    typeof env.STREAM.video !== "function" ||
+    !videoUid ||
+    !customerCode
+  ) {
+    return "";
+  }
+
+  const token = await env.STREAM.video(videoUid).generateToken();
+  const tokenValue =
+    typeof token === "string" ? token : token?.token || token?.result?.token;
+  if (!tokenValue) {
+    return "";
+  }
+
+  return `https://customer-${customerCode}.cloudflarestream.com/${tokenValue}/iframe`;
+}
+
 function clean(value, maxLength) {
   return String(value || "").trim().slice(0, maxLength);
 }
 
 async function sendEmail(env, emailPayload) {
+  if (!env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+
   const fromAddress = env.FROM_EMAIL || "onboarding@resend.dev";
 
   const response = await fetch("https://api.resend.com/emails", {
@@ -199,6 +413,8 @@ function buildAdminNotification(data) {
         <tr><td style="padding:8px;font-weight:bold;">Name</td><td style="padding:8px;">${esc(data.name)}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Email</td><td style="padding:8px;">${esc(data.email)}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Phone</td><td style="padding:8px;">${esc(data.phone || "N/A")}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">SMS opt-in</td><td style="padding:8px;">${esc(data.smsOptIn ? "Yes" : "No")}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Email opt-in</td><td style="padding:8px;">${esc(data.emailOptIn === 0 ? "No" : "Yes")}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Source</td><td style="padding:8px;">${esc(data.source || "N/A")}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Notes</td><td style="padding:8px;">${esc(data.specialRequests || "None")}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Submitted</td><td style="padding:8px;">${esc(data.submittedAt || "N/A")}</td></tr>
@@ -211,7 +427,8 @@ function buildUserConfirmation(data, env) {
   const publicSiteUrl = String(
     env.PUBLIC_SITE_URL || "https://golden-wings-robyn.com"
   ).replace(/\/+$/, "");
-  const watchUrl = publicSiteUrl + "/watch";
+  const watchUrl =
+    publicSiteUrl + "/watch?email=" + encodeURIComponent(data.email);
 
   return {
     to: [data.email],
@@ -224,7 +441,7 @@ function buildUserConfirmation(data, env) {
         <h1 style="color:#1e3a5f;text-align:center;">Welcome Aboard, ${esc(data.name)}!</h1>
         <p style="font-size:16px;color:#333;line-height:1.6;">
           Thank you for your interest in <strong>Golden Wings</strong> — the story of Robyn Stewart's
-          incredible 50+ year career as an American Airlines flight attendant.
+          incredible 55+ year career as an American Airlines flight attendant.
         </p>
         <div style="text-align:center;margin:32px 0;">
           <a href="${watchUrl}" style="background:#2563eb;color:#fff;padding:16px 32px;text-decoration:none;border-radius:8px;font-size:18px;font-weight:bold;display:inline-block;">

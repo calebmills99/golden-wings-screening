@@ -35,7 +35,9 @@ describe('createCloudflareApiClient', () => {
         email: 'robyn@example.com',
         phone: '',
         source: 'Festival',
-        'hp-check': ''
+        'hp-check': '',
+        smsOptIn: false,
+        emailOptIn: true
       })
     })
   })
@@ -91,5 +93,36 @@ describe('createCloudflareApiClient', () => {
         honeypot: ''
       })
     ).rejects.toThrow('Valid email is required')
+  })
+
+  it('requests a signed watch token', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
+      new Response(
+        JSON.stringify({
+          success: true,
+          embedUrl: 'https://customer-x.cloudflarestream.com/token/iframe',
+          screeningState: 'open'
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    )
+    const client = createCloudflareApiClient({
+      baseUrl: 'https://worker.example.com',
+      fetchImpl
+    })
+
+    await expect(
+      client.requestWatchToken({
+        email: 'viewer@example.com',
+        honeypot: ''
+      })
+    ).resolves.toEqual({
+      embedUrl: 'https://customer-x.cloudflarestream.com/token/iframe',
+      screeningState: 'open',
+      message: undefined
+    })
   })
 })
